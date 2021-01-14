@@ -1,0 +1,11 @@
+{
+    "primary": "#E0E0E0",
+    "secondary": "#5e5e5e",
+    "highlight": "#255E9D",
+    "highlightTransparent": "rgb(245, 245, 244)",
+    "bg": "#DDDDDD",
+    "turret": "#B0B0B0",
+    "enemy": "#b5143f",
+    "road": "#DEB887",
+    "ground": "#719263"
+}

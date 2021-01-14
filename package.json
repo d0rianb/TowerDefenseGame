@@ -1,0 +1,20 @@
+{
+    "name": "template",
+    "version": "0.0.1",
+    "description": "",
+    "scripts": {
+        "dev": "webpack --watch",
+        "build": "webpack"
+    },
+    "dependencies": {
+        "ts-loader": "^6.2.2",
+        "typescript": "^3.8.3"
+    },
+    "devDependencies": {
+        "webpack": "^4.42.1",
+        "webpack-cli": "^3.3.11"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC"
+}
