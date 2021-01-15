@@ -4,12 +4,19 @@ module.exports = {
     entry: './src/app.ts',
     devtool: 'inline-source-map',
     mode: 'development',
+    target: 'web',
     module: {
         rules: [{
             test: /\.tsx?$/,
             use: 'ts-loader',
             exclude: /node_modules/,
-        }, ],
+        }, {
+            test: /\.(png|svg|jpg|gif)$/,
+            loader: 'file-loader',
+            options: {
+                publicPath: 'dist/'
+            }
+        }],
     },
     resolve: {
         extensions: ['.tsx', '.ts', '.js'],

@@ -40,6 +40,7 @@ export class Enemy {
         this.env.shots.forEach(shot => {
             if (this.pos.dist(shot.pos) < this.radius) {
                 this.health -= shot.damage
+                this.env.shots = this.env.shots.filter(envShot => envShot !== shot)
                 if (this.health <= 0) {
                     this.env.enemies = this.env.enemies.filter(enemy => enemy !== this)
                 }

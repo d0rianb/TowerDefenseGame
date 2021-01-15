@@ -40,5 +40,14 @@ class Point {
     }
 }
 
+class Vector2 {
+    x: number
+    y: number
 
-export { Path, Point }
+    constructor(x: number, y: number) {
+        this.x = x
+        this.y = y
+    }
+}
+
+export { Path, Point, Vector2 }

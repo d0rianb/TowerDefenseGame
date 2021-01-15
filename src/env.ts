@@ -144,8 +144,8 @@ export class Env {
         })
         if (this.path) { this.path.render(ctx) }
         this.enemies.forEach(enemy => enemy.render(ctx))
-        this.turrets.forEach(turret => turret.render(ctx))
         this.shots.forEach(shot => shot.render(ctx))
+        this.turrets.forEach(turret => turret.render(ctx))
 
         const highlightCell: Cell = this.grid.cells.find(cell => cell.highlight)
         if (highlightCell) {
