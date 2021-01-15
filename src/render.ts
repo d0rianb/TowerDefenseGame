@@ -64,6 +64,7 @@ class Renderer {
     }
 
     static rectSprite(ctx: CanvasRenderingContext2D, x: number, y: number, width: number, height: number, texture: Texture): void {
+        Renderer.style(ctx, {})
         ctx.save()
         ctx.translate(x + width / 2, y + height / 2)
         ctx.scale(texture.scale.x, texture.scale.y)
