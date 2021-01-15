@@ -19,11 +19,12 @@ const defaultStyleObject: StyleObject = {
 class Renderer {
 
     static style(ctx: CanvasRenderingContext2D, obj?: StyleObject): void {
-        ctx.lineWidth = obj ? obj.lineWidth : defaultStyleObject.lineWidth
-        ctx.strokeStyle = obj ? obj.strokeStyle : defaultStyleObject.strokeStyle
-        ctx.lineJoin = obj ? obj.lineJoin : defaultStyleObject.lineJoin
-        ctx.fillStyle = obj ? obj.fillStyle : defaultStyleObject.fillStyle
-        ctx.globalAlpha = obj ? obj.transparency : defaultStyleObject.transparency
+        const styleObject = { ...defaultStyleObject, ...obj }
+        ctx.lineWidth = styleObject.lineWidth
+        ctx.strokeStyle = styleObject.strokeStyle
+        ctx.lineJoin = styleObject.lineJoin
+        ctx.fillStyle = styleObject.fillStyle
+        ctx.globalAlpha = styleObject.transparency
     }
 
     static line(ctx: CanvasRenderingContext2D, point1: Point, point2: Point, obj?: StyleObject): void {

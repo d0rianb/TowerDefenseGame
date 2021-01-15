@@ -1,7 +1,7 @@
 import { Grid, Cell, CellType } from './grid'
 import { Path, Point } from './path'
 import { Renderer } from './render'
-import { Turret } from './turret'
+import { Turret, Shot } from './turret'
 import { Enemy } from './enemy'
 import * as color from '../ressources/color.json'
 
@@ -14,6 +14,7 @@ export class Env {
     cellHeight: number
     turrets: Array<Turret>
     enemies: Array<Enemy>
+    shots: Array<Shot>
     health: number
     path: Path
 
@@ -24,6 +25,7 @@ export class Env {
         this.height = this.canvas.height
         this.turrets = []
         this.enemies = []
+        this.shots = []
         this.health = 1000 // hp
         this.cellWidth = this.width / this.grid.cols
         this.cellHeight = this.cellWidth
@@ -39,7 +41,7 @@ export class Env {
     }
 
     spawnEnemy(): void {
-        this.enemies.push(new Enemy(this.path, 100))
+        this.enemies.push(new Enemy(this, 100))
     }
 
     defineCellsType(): void {
@@ -107,13 +109,14 @@ export class Env {
         }
         if (cell && (cell.type === CellType.Empty || cell.type === CellType.Ground)) {
             cell.type = CellType.Turret
-            this.turrets.push(new Turret(cell, this.cellWidth))
+            this.turrets.push(new Turret(cell, this))
         }
     }
 
     update() {
         this.enemies.forEach(enemy => enemy.update())
         this.turrets.forEach(turret => turret.update())
+        this.shots.forEach(shot => shot.update())
         this.render()
         window.requestAnimationFrame(() => this.update())
     }
@@ -139,11 +142,10 @@ export class Env {
                 lineWidth: .5
             })
         })
-        if (this.path) {
-            this.path.render(ctx)
-        }
+        if (this.path) { this.path.render(ctx) }
         this.enemies.forEach(enemy => enemy.render(ctx))
         this.turrets.forEach(turret => turret.render(ctx))
+        this.shots.forEach(shot => shot.render(ctx))
 
         const highlightCell: Cell = this.grid.cells.find(cell => cell.highlight)
         if (highlightCell) {
