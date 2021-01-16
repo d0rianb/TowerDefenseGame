@@ -41,11 +41,13 @@ class Turret {
     }
 
     update(): void {
-        const targets: Array<Enemy> = this.env.enemies
-            .sort((enemy1, enemy2) => this.pos.dist(enemy1.pos) - this.pos.dist(enemy2.pos))
-            .filter(enemy => this.pos.dist(enemy.pos) < this.radius)
-        if (targets.length) { this.target = targets[0] }
-        else { this.target = undefined }
+        if (!this.target || this.pos.dist(this.target.pos) >= this.radius) {
+            const targets: Array<Enemy> = this.env.enemies
+                .sort((enemy1, enemy2) => this.pos.dist(enemy1.pos) - this.pos.dist(enemy2.pos))
+                .filter(enemy => this.pos.dist(enemy.pos) < this.radius)
+            if (targets.length) { this.target = targets[0] }
+            else { this.target = undefined }
+        }
 
         if (this.target) {
             this.dir = Math.atan2(this.target.pos.y - this.pos.y, this.target.pos.x - this.pos.x)

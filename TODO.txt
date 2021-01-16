@@ -1,0 +1,3 @@
+TODO :
+ - path serialization - (json - custom format)
+ - shoot prediction

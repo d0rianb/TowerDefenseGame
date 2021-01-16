@@ -39,7 +39,7 @@ class Sprite extends Texture {
 }
 
 const TURRET_BASE_TEXTURE = new Texture(TURRET_BASE)
-const TURRET_HEAD_TEXTURE = new Texture(TURRET_HEAD, { scale: new Vector2(1.2, 1.2), offset: new Vector2(0, -1 / 9), rotation: 2 * Math.PI })
+const TURRET_HEAD_TEXTURE = new Texture(TURRET_HEAD, { scale: new Vector2(1.2, 1.2), offset: new Vector2(0, -1 / 9) })
 
 export { Sprite, Texture }
 export { TURRET_BASE_TEXTURE, TURRET_HEAD_TEXTURE }
