@@ -10,6 +10,7 @@ export class Enemy {
     radius: number
     speed: number
     health: number
+    alive: boolean
 
     constructor(env: Env, health: number) {
         this.env = env
@@ -19,6 +20,7 @@ export class Enemy {
         this.radius = 10
         this.speed = .01
         this.health = health
+        this.alive = true
     }
 
     move(): void {
@@ -42,7 +44,7 @@ export class Enemy {
                 this.health -= shot.damage
                 this.env.shots = this.env.shots.filter(envShot => envShot !== shot)
                 if (this.health <= 0) {
-                    this.env.enemies = this.env.enemies.filter(enemy => enemy !== this)
+                    this.alive = false
                 }
                 return true
             }

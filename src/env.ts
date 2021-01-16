@@ -117,6 +117,7 @@ export class Env {
         this.enemies.forEach(enemy => enemy.update())
         this.turrets.forEach(turret => turret.update())
         this.shots.forEach(shot => shot.update())
+        this.enemies = this.enemies.filter(enemy => enemy.alive)
         this.render()
         window.requestAnimationFrame(() => this.update())
     }

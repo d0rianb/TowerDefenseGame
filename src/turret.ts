@@ -41,7 +41,7 @@ class Turret {
     }
 
     update(): void {
-        if (!this.target || this.pos.dist(this.target.pos) >= this.radius) {
+        if (!this.target || this.pos.dist(this.target.pos) > this.radius || !this.target.alive) {
             const targets: Array<Enemy> = this.env.enemies
                 .sort((enemy1, enemy2) => this.pos.dist(enemy1.pos) - this.pos.dist(enemy2.pos))
                 .filter(enemy => this.pos.dist(enemy.pos) < this.radius)

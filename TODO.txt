@@ -1,3 +1,7 @@
 TODO :
  - path serialization - (json - custom format)
  - shoot prediction
+ - solve speed issue
+ - better path finding
+ - map editor
+ 
