@@ -1,14 +1,29 @@
+import PathBuilder from 'svg-path-builder';
 import { Renderer } from './render'
+
+interface JSONPath {
+    points: Array<Array<number>>
+}
 
 class Path {
     entry: Point
     points: Array<Point>
     end: Point
+    svg: any
+    length: number
 
     constructor(points: Array<Point>) {
         this.entry = points[0] || null
         this.end = points[points.length - 1]
-        this.points = points.sort((point1, point2) => this.entry.dist(point1) - this.entry.dist(point2))
+        this.points = points
+        this.svg = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        this.svg.setAttribute('d', this.toSVGPath())
+        this.length = this.svg.getTotalLength()
+    }
+
+    static fromJSON(json: JSONPath, scaleFactor: Vector2 = V_UNIT) {
+        const points: Array<Point> = json.points.map(tuple => new Point(tuple[0] * scaleFactor.x, tuple[1] * scaleFactor.y))
+        return new Path(points)
     }
 
     addPoint(point: Point): void {
@@ -17,8 +32,24 @@ class Path {
         this.recalculate()
     }
 
+    pointAt(percent) {
+        return this.svg.getPointAtLength(this.length * percent / 100)
+    }
+
     recalculate(): void {
         this.end = this.points[this.points.length - 1]
+        this.svg = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        this.svg.setAttribute('d', this.toSVGPath())
+    }
+
+    toSVGPath(): string {
+        const builder: PathBuilder = new PathBuilder()
+        const path = builder.moveTo(this.entry.x, this.entry.y)
+        for (let i = 1; i < this.points.length; i++) {
+            path.lineTo(this.points[i].x, this.points[i].y) // smoothTo ?
+        }
+        const stringPath: string = path.toString()
+        return stringPath
     }
 
     render(ctx: CanvasRenderingContext2D): void {
@@ -49,5 +80,8 @@ class Vector2 {
         this.y = y
     }
 }
+
+export const V_NULL = new Vector2(0, 0)
+export const V_UNIT = new Vector2(1, 1)
 
 export { Path, Point, Vector2 }

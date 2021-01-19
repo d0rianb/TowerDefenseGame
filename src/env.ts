@@ -1,9 +1,12 @@
+import { saveAs } from 'file-saver';
+
 import { Grid, Cell, CellType } from './grid'
-import { Path, Point } from './path'
+import { Path, Point, Vector2 } from './path'
 import { Renderer } from './render'
 import { Turret, Shot } from './turret'
 import { Enemy } from './enemy'
 import * as color from '../ressources/color.json'
+
 
 export class Env {
     grid: Grid
@@ -32,12 +35,39 @@ export class Env {
         this.path = undefined
     }
 
+    loadMap(filename: string): void {
+        fetch(`ressources/map/${filename.replace(/\.map/, '')}.map`)
+            .then(data => data.json())
+            .then(map => {
+                const scaleFactor: Vector2 = {
+                    x: this.canvas.width / map.screen.width,
+                    y: this.canvas.height / map.screen.width,
+                }
+                const path: Path = Path.fromJSON(map.path, scaleFactor)
+                this.setPath(path)
+                this.path.toSVGPath()
+            })
+            .catch(err => console.error(err))
+    }
+
+    saveMap(filename: string): void {
+        const name: string = filename.replace('.map', '')
+        const mapObject: object = {
+            'map-name': name,
+            screen: { width: this.canvas.width, height: this.canvas.height },
+            path: { points: this.path.points.map(point => [point.x, point.y]) }
+        }
+        const file = new Blob([JSON.stringify(mapObject)], { type: 'application/json' })
+        saveAs(file, `${name}.map`)
+    }
+
     setPath(path: Path): void {
         if (!this.path) {
             this.path = path
         } else {
             path.points.forEach(point => this.path.addPoint(point))
         }
+        this.defineCellsType()
     }
 
     spawnEnemy(): void {
@@ -97,6 +127,11 @@ export class Env {
             case 'Space':
                 this.spawnEnemy()
                 e.preventDefault()
+                break
+            case 'Enter':
+                this.saveMap('test2.map')
+                e.preventDefault()
+                break
         }
     }
 

@@ -9,8 +9,10 @@ export class Enemy {
     nodeIndex: number
     radius: number
     speed: number
+    angle: number
     health: number
     alive: boolean
+
 
     constructor(env: Env, health: number) {
         this.env = env
@@ -18,24 +20,29 @@ export class Enemy {
         this.nodeIndex = 0
         this.pos = new Point(this.path.entry.x, this.path.entry.y)
         this.radius = 10
-        this.speed = .01
+        this.speed = 3
         this.health = health
         this.alive = true
+        this.percent = 0
+        this.angle = 0
+    }
+
+    moveTo(point, angle): void {
+        if (point) {
+            this.pos.x = point.x
+            this.pos.y = point.y
+        }
     }
 
     move(): void {
-        const eps = 2
-        const deltaX: number = this.path.points[this.nodeIndex + 1].x - this.path.points[this.nodeIndex].x
-        const deltaY: number = this.path.points[this.nodeIndex + 1].y - this.path.points[this.nodeIndex].y
-        const slope: number = Math.sqrt(deltaX ** 2 + deltaY ** 2)
-        const angle: number = Math.atan2(deltaY, deltaX)
-        this.pos.x += this.speed * slope * Math.cos(angle)
-        this.pos.y += this.speed * slope * Math.sin(angle)
-        if (Math.abs(this.pos.x - this.path.points[this.nodeIndex + 1].x) < eps &&
-            Math.abs(this.pos.y - this.path.points[this.nodeIndex + 1].y) < eps &&
-            this.nodeIndex + 1 < this.path.points.length - 1) {
-            this.nodeIndex++
-        }
+        const pos = this.path.pointAt(this.percent)
+        this.pos.x = pos.x
+        this.pos.y = pos.y
+        this.percent += this.path.length * this.speed * 1e-5
+
+        let posBefore = this.path.pointAt(this.percent - 1)
+        let posAfter = this.path.pointAt(this.percent + 1)
+        this.angle = Math.atan2(posAfter.y - posBefore.y, posAfter.x - posBefore.x) * 180 / Math.PI
     }
 
     checkHit(): boolean {

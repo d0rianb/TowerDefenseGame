@@ -1,0 +1,12 @@
+{
+    "map-name": "Test Map",
+    "screen": {
+        "width": 1920,
+        "height": 1080
+    },
+    "path": {
+        "points": [
+            [10, 100], [100, 200]
+        ]
+    }
+}

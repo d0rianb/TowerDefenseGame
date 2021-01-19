@@ -1,4 +1,4 @@
-import { Point, Vector2 } from './path'
+import { Point, Vector2, V_UNIT, V_NULL } from './path'
 
 import { default as TURRET_BASE } from '../ressources/assets/turret-base-2.png'
 import { default as TURRET_HEAD } from '../ressources/assets/turret-head-2.png'
@@ -9,9 +9,6 @@ interface TextureOptions {
     offset?: Vector2,
     scale?: Vector2
 }
-
-const V_NULL = new Vector2(0, 0)
-const V_UNIT = new Vector2(1, 1)
 
 class Texture {
     image: HTMLImageElement

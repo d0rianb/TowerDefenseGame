@@ -2,6 +2,9 @@ TODO :
  - path serialization - (json - custom format)
  - shoot prediction
  - solve speed issue
- - better path finding
+ - better path finding :
+        https://stackoverflow.com/questions/9270214/html5-canvas-animating-an-object-following-a-path
+        https://github.com/yairEO/pathAnimator/
  - map editor
- 
+ - fix turret shadow issue
+ - add version check to map

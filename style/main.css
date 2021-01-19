@@ -16,4 +16,37 @@ canvas {
   width: 100%;
   height: 100%;
   overflow: hidden;
+  z-index: 2;
+}
+
+.loading-screen {
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #eee;
+}
+
+.loading-screen h2 {
+  width: 50%;
+  margin: 3rem auto;
+  font-size: 2em;
+  text-align: center;
+  color: #024170;
+}
+
+.loading-screen img {
+  width: 25%;
+  height: auto;
+}
+
+.loading-screen progress {
+  margin: 2em auto;
+}
+.loading-screen progress::-webkit-progress-value {
+  transition: 200ms;
 }
