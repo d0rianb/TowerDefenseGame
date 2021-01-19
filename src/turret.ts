@@ -50,7 +50,8 @@ class Turret {
         }
 
         if (this.target) {
-            this.dir = Math.atan2(this.target.pos.y - this.pos.y, this.target.pos.x - this.pos.x)
+            const predictTargetPos = this.target.nextPos(4)
+            this.dir = Math.atan2(predictTargetPos.y - this.pos.y, predictTargetPos.x - this.pos.x)
             if (this.canShoot) {
                 this.shoot()
             }
