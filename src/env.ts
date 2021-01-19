@@ -30,7 +30,7 @@ export class Env {
         this.enemies = []
         this.shots = []
         this.health = 1000 // hp
-        this.cellWidth = this.width / this.grid.cols
+        this.cellWidth = Math.min(this.width / this.grid.rows, this.height / this.grid.cols)
         this.cellHeight = this.cellWidth
         this.path = undefined
     }

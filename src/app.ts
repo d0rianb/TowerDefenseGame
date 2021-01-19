@@ -25,7 +25,7 @@ progressBar.value += 10
 document.querySelector('main').appendChild(canvas)
 progressBar.value += 10
 
-const grid: Grid = new Grid(50, 50)
+const grid: Grid = new Grid(40, 40)
 const env: Env = new Env(grid, canvas)
 progressBar.value += 10
 
@@ -38,7 +38,6 @@ const path: Path = new Path([entryPoint])
 env.loadMap('test3.map')
 progressBar.value += 10
 loadingScreen.style.display = 'none'
-
 
 
 window.addEventListener('keydown', e => env.handleKeyDown(e))

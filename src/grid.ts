@@ -64,28 +64,6 @@ class Grid {
         })
     }
 
-    handleKeyboardEvent(e: KeyboardEvent) {
-        if (!this.focusCell) return
-        switch (e.code) {
-            case 'ArrowUp':
-            case 'KeyW':
-                this.focusCell.neighboor['top'] ? this.focusCell = this.focusCell.neighboor['top'] : null
-                break
-            case 'ArrowDown':
-            case 'KeyS':
-            case 'Enter':
-                this.focusCell.neighboor['bottom'] ? this.focusCell = this.focusCell.neighboor['bottom'] : null
-                break
-            case 'ArrowLeft':
-            case 'KeyA':
-                this.focusCell.neighboor['left'] ? this.focusCell = this.focusCell.neighboor['left'] : null
-                break
-            case 'ArrowRight':
-            case 'KeyD':
-                this.focusCell.neighboor['right'] ? this.focusCell = this.focusCell.neighboor['right'] : null
-                break
-        }
-    }
 }
 
 class Cell {
