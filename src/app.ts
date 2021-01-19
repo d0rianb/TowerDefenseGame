@@ -31,11 +31,11 @@ progressBar.value += 10
 
 const entryPoint: Point = new Point(0, 0)
 const path: Path = new Path([entryPoint])
-// env.setPath(path)
+env.setPath(path)
 
 
 // Load Map
-env.loadMap('test3.map')
+// env.loadMap('test3.map')
 progressBar.value += 10
 loadingScreen.style.display = 'none'
 

@@ -3,3 +3,4 @@ TODO :
  - map editor
  - fix turret shadow issue
  - add version check to map
+ - destroy shoot when out of bounds

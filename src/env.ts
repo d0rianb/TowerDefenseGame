@@ -120,6 +120,13 @@ export class Env {
         if (cell) {
             cell.highlight = true
             this.grid.focusCell = cell
+
+            if (cell.type == CellType.Turret) {
+                const turret: Turret = this.turrets.find(turret => turret.cell === cell)
+                this.displayStats(e, turret)
+            } else {
+                this.hideStats()
+            }
         }
     }
     handleKeyDown(e: KeyboardEvent): void {
@@ -146,6 +153,26 @@ export class Env {
             cell.type = CellType.Turret
             this.turrets.push(new Turret(cell, this))
         }
+    }
+
+    displayStats(e: MouseEvent, turret: Turret): void {
+        const { x, y } = e
+        const statsPannel: HTMLElement = document.querySelector('.floating-stats')
+        statsPannel.style.left = `${x + 10}px`
+        statsPannel.style.top = `${y + 10}px`
+        statsPannel.style.display = 'block'
+        statsPannel.style.opacity = .9
+        statsPannel.innerHTML = `
+            <li>Health   : ${turret.health}%</li>
+            <li>Radius   : ${turret.radius}px</li>
+            <li>Damage   : ${turret.damage}</li>
+            <li>FireRate : ${turret.fireRate}</li>`
+    }
+
+    hideStats(): void {
+        const statsPannel: HTMLElement = document.querySelector('.floating-stats')
+        statsPannel.style.display = 'none'
+        statsPannel.style.opacity = 0
     }
 
     update() {

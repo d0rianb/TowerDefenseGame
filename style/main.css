@@ -50,3 +50,24 @@ canvas {
 .loading-screen progress::-webkit-progress-value {
   transition: 200ms;
 }
+
+.stats {
+  position: absolute;
+  z-index: 10;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  background-color: #78909c;
+  border-radius: 5px;
+  margin: 0;
+  padding: 0.5em;
+  transition: opacity 150ms ease;
+}
+
+.stats li {
+  font-size: 0.9em;
+  font-family: sans-serif;
+  font-weight: 300;
+  list-style: none;
+  color: #eee;
+}

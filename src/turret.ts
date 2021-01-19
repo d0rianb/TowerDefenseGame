@@ -14,6 +14,7 @@ class Turret {
     health: number
     radius: number
     target: Enemy
+    damage: number
     canShoot: boolean
     dir: number
     fireRate: number
@@ -25,6 +26,7 @@ class Turret {
         this.pos = new Point((this.cell.x + 0.5) * this.env.cellWidth, (this.cell.y + 0.5) * this.env.cellWidth)
         this.health = 100
         this.radius = 100
+        this.damage = 10
         this.target = undefined
         this.canShoot = true
         this.dir = -Math.PI / 2
@@ -33,7 +35,7 @@ class Turret {
 
     shoot(): void {
         // TODO: predict position
-        this.env.shots.push(new Shot(<Point>{ ...this.pos }, this.dir))
+        this.env.shots.push(new Shot(<Point>{ ...this.pos }, this.dir, this.damage))
         this.canShoot = false
         window.setTimeout(() => {
             this.canShoot = true
@@ -74,10 +76,10 @@ class Shot {
     length: number
     speed: number
 
-    constructor(pos: Point, dir: number) {
+    constructor(pos: Point, dir: number, damage: number = 10) {
         this.pos = pos
         this.dir = dir
-        this.damage = 10
+        this.damage = damage
         this.length = 10
         this.speed = 10
     }
