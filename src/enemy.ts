@@ -2,13 +2,19 @@ import { Path, Point } from './path'
 import { Renderer } from './render'
 import { Env } from './env'
 
+interface MovementObject {
+    speed: number
+    duration: number
+    startTime: number
+}
+
 export class Enemy {
     env: Env
     path: Path
     pos: Point
     nodeIndex: number
     radius: number
-    speed: number
+    movement: MovementObject
     percent: number
     angle: number
     health: number
@@ -20,7 +26,11 @@ export class Enemy {
         this.nodeIndex = 0
         this.pos = new Point(this.path.entry.x, this.path.entry.y)
         this.radius = 10
-        this.speed = 5
+        this.movement = {
+            speed: 120, // m/s
+            duration: null,
+            startTime: Date.now()
+        }
         this.health = health
         this.alive = true
         this.percent = 0
@@ -28,19 +38,21 @@ export class Enemy {
     }
 
     move(): void {
+        if (!this.movement.duration) { this.movement.duration = this.path.length / this.movement.speed }
         const pos = this.nextPos()
         this.pos.x = pos.x
         this.pos.y = pos.y
-        this.percent += this.path.length * this.speed * 1e-5
+        this.percent += (Date.now() - this.movement.startTime) / this.movement.duration / 10
 
-        let posBefore = this.path.pointAt(this.percent - 1)
-        let posAfter = this.path.pointAt(this.percent + 1)
+        // Angle calculation
+        const posBefore = this.path.pointAt(this.percent - 1)
+        const posAfter = this.path.pointAt(this.percent + 1)
         this.angle = Math.atan2(posAfter.y - posBefore.y, posAfter.x - posBefore.x) * 180 / Math.PI
     }
 
     nextPos(iteration: number = 1) {
-        let nextPercent: number = this.path.length * this.speed * 1e-5 * iteration
-        return this.path.pointAt(this.percent + nextPercent)
+        let nextPercent: number = (Date.now() + (iteration - 1) * 60 - this.movement.startTime) / this.movement.duration / 10
+        return this.path.pointAt(nextPercent)
     }
 
     checkHit(): boolean {
