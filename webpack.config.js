@@ -2,7 +2,7 @@ const path = require('path');
 
 module.exports = {
     entry: './src/app.ts',
-    devtool: 'inline-source-map',
+    devtool: 'eval-source-map',
     mode: 'development',
     target: 'web',
     module: {
@@ -20,6 +20,9 @@ module.exports = {
     },
     resolve: {
         extensions: ['.tsx', '.ts', '.js'],
+        alias: {
+            vue: 'vue/dist/vue.js'
+        }
     },
     output: {
         filename: 'app.bundle.js',

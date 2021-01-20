@@ -6,6 +6,13 @@ import { Renderer } from './render'
 
 import { TURRET_BASE_TEXTURE, TURRET_HEAD_TEXTURE } from './texture'
 
+interface StatsObejct {
+    health: number
+    radius: number
+    damage: number
+    fireRate: number
+}
+
 class Turret {
     cell: Cell
     env: Env
@@ -42,6 +49,15 @@ class Turret {
         }, this.fireRate)
     }
 
+    getStats(): StatsObejct {
+        return {
+            health: this.health,
+            radius: this.radius,
+            damage: this.damage,
+            fireRate: this.fireRate
+        }
+    }
+
     update(): void {
         if (!this.target || this.pos.dist(this.target.pos) > this.radius || !this.target.alive) {
             const targets: Array<Enemy> = this.env.enemies
@@ -60,12 +76,16 @@ class Turret {
         }
     }
 
-    render(ctx: CanvasRenderingContext2D): void {
+    render(ctx: CanvasRenderingContext2D, preview: boolean = false): void {
         TURRET_HEAD_TEXTURE.rotation = this.dir + Math.PI / 2
-        Renderer.rectSprite(ctx, this.origin.x, this.origin.y, this.env.cellWidth, this.env.cellWidth, TURRET_BASE_TEXTURE)
-        Renderer.rectSprite(ctx, this.origin.x, this.origin.y, this.env.cellWidth, this.env.cellWidth, TURRET_HEAD_TEXTURE)
-        // Renderer.circle(ctx, this.pos.x, this.pos.y, 10, { lineWidth: 2, strokeStyle: 'black' })
-        Renderer.circle(ctx, this.pos.x, this.pos.y, this.radius, { lineWidth: 1, transparency: .25, strokeStyle: 'white' })
+        if (preview) {
+            Renderer.rectSprite(ctx, 20, 20, 80, 80, TURRET_BASE_TEXTURE)
+            Renderer.rectSprite(ctx, 20, 20, 80, 80, TURRET_HEAD_TEXTURE)
+        } else {
+            Renderer.rectSprite(ctx, this.origin.x, this.origin.y, this.env.cellWidth, this.env.cellWidth, TURRET_BASE_TEXTURE)
+            Renderer.rectSprite(ctx, this.origin.x, this.origin.y, this.env.cellWidth, this.env.cellWidth, TURRET_HEAD_TEXTURE)
+            Renderer.circle(ctx, this.pos.x, this.pos.y, this.radius, { lineWidth: 1, transparency: .25, strokeStyle: 'white' })
+        }
     }
 }
 

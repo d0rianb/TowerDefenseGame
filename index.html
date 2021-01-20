@@ -11,18 +11,30 @@
 </head>
 
 <body>
-  <main>
+  <main id="app">
     <div class="loading-screen">
       <h2>Tower Defense Game which currently doesn't have a proper name</h2>
       <img src="./ressources/img/tdg-logo-2.png" alt="logo">
       <progress value="0" max="100">0%</progress>
     </div>
-    <div class="floating-stats stats"></div>
-    <div class="control-pannel">
+    <div class="floating-stats stats" v-show="turretHoverStats">
+      <li>Health : {{ turretHoverStats?.health }}</li>
+      <li>Radius : {{ turretHoverStats?.radius }}px</li>
+      <li>Damage : {{ turretHoverStats?.damage }}</li>
+      <li>FireRate : {{ turretHoverStats?.fireRate }}</li>
+    </div>
+
+    <div class="control-pannel" v-show="turretStats">
+      <h2>Control Pannel</h2>
       <div class="turret-view">
-        <canvas id="turret-viewer"></canvas>
+        <canvas id="turret-viewer" width="120" height="120"></canvas>
       </div>
-      <div class="turret-stats stats"></div>
+      <div class="turret-stats stats" v-if="turretStats">
+        <li>Health : {{ turretStats?.health }}</li>
+        <li>Radius : {{ turretStats?.radius }}px</li>
+        <li>Damage : {{ turretStats?.damage }}</li>
+        <li>FireRate : {{ turretStats?.fireRate }}</li>
+      </div>
       <div class="turret-actions">
       </div>
     </div>

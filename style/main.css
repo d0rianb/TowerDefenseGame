@@ -19,6 +19,11 @@ canvas {
   z-index: 2;
 }
 
+p,
+h2 {
+  margin: 0.5em;
+}
+
 .loading-screen {
   display: flex;
   flex-flow: column nowrap;
@@ -29,6 +34,7 @@ canvas {
   width: 100vw;
   height: 100vh;
   background-color: #eee;
+  z-index: 15;
 }
 
 .loading-screen h2 {
@@ -56,7 +62,7 @@ canvas {
   z-index: 10;
   top: 0;
   left: 0;
-  opacity: 0;
+  opacity: 0.9;
   background-color: #78909c;
   border-radius: 5px;
   margin: 0;
@@ -64,7 +70,7 @@ canvas {
   transition: opacity 150ms ease;
 }
 
-.floating-stats li {
+.stats li {
   font-size: 0.9em;
   font-family: sans-serif;
   font-weight: 300;
@@ -73,5 +79,34 @@ canvas {
 }
 
 .control-pannel {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
   position: absolute;
+  top: 5rem;
+  right: 0.5rem;
+  margin: 0;
+  padding: 0.5em;
+  /* max-width: 15rem; */
+  color: #fff;
+  background-color: #78909c;
+  border-radius: 5px;
+  opacity: 0.95;
+  transition: opacity 150ms ease;
+  backdrop-filter: blur(2px);
+  z-index: 10;
+}
+
+.control-pannel canvas {
+  width: 5em;
+  height: 5em;
+}
+
+.turret-stats {
+  width: 100%;
+}
+
+.turret-stats .stats li {
+  padding: 0.25em;
 }

@@ -5,8 +5,8 @@ import { Path, Point, Vector2 } from './path'
 import { Renderer } from './render'
 import { Turret, Shot } from './turret'
 import { Enemy } from './enemy'
+import { Interface } from './interface'
 import * as color from '../ressources/color.json'
-
 
 export class Env {
     grid: Grid
@@ -97,8 +97,8 @@ export class Env {
     }
 
     detectCell(e: MouseEvent): Cell {
-        const x = e.offsetX
-        const y = e.offsetY
+        const x = e.clientX
+        const y = e.clientY
         return this.getCell(x, y)
     }
 
@@ -107,8 +107,6 @@ export class Env {
         const cell: Cell = this.detectCell(e)
         if (cell) {
             cell.highlight = true
-            this.grid.focusCell = cell
-
             if (cell.type == CellType.Turret) {
                 const turret: Turret = this.turrets.find(turret => turret.cell === cell)
                 this.displayStats(e, turret)
@@ -146,6 +144,11 @@ export class Env {
             cell.type = CellType.Turret
             this.turrets.push(new Turret(cell, this))
         }
+        if (cell && cell.type == CellType.Turret) {
+            this.grid.focusCell = cell
+        } else {
+            this.grid.focusCell = null
+        }
     }
 
     displayStats(e: MouseEvent, turret: Turret): void {
@@ -153,19 +156,27 @@ export class Env {
         const statsPannel: HTMLElement = document.querySelector('.floating-stats')
         statsPannel.style.left = `${x + 10}px`
         statsPannel.style.top = `${y + 10}px`
-        statsPannel.style.display = 'block'
-        statsPannel.style.opacity = '.9'
-        statsPannel.innerHTML = `
-            <li>Health   : ${turret.health}%</li>
-            <li>Radius   : ${turret.radius}px</li>
-            <li>Damage   : ${turret.damage}</li>
-            <li>FireRate : ${turret.fireRate}</li>`
+        Interface.turretHoverStats = turret.getStats()
     }
 
     hideStats(): void {
-        const statsPannel: HTMLElement = document.querySelector('.floating-stats')
-        statsPannel.style.display = 'none'
-        statsPannel.style.opacity = '0'
+        Interface.turretHoverStats = undefined
+    }
+
+    updateControlPannel(): void {
+        const controlPannel: HTMLElement = document.querySelector('.control-pannel')
+        const controlPannelCanvas: HTMLCanvasElement = document.querySelector('#turret-viewer')
+        const controlPannelStats: HTMLElement = document.querySelector('.control-pannel .turret-stats')
+
+        if (this.grid.focusCell) {
+            const controlPannelCanvasCtx: CanvasRenderingContext2D = controlPannelCanvas.getContext('2d')
+            controlPannelCanvasCtx.clearRect(0, 0, 120, 120)
+            const turret: Turret = this.turrets.find(turret => turret.cell === this.grid.focusCell)
+            turret.render(controlPannelCanvasCtx, true)
+            Interface.turretStats = turret.getStats()
+        } else {
+            Interface.turretStats = null
+        }
     }
 
     update() {
@@ -173,6 +184,7 @@ export class Env {
         this.turrets.forEach(turret => turret.update())
         this.shots.forEach(shot => shot.update())
         this.enemies = this.enemies.filter(enemy => enemy.alive)
+        this.updateControlPannel()
         this.render()
         window.requestAnimationFrame(() => this.update())
     }
@@ -205,11 +217,20 @@ export class Env {
 
         const highlightCell: Cell = this.grid.cells.find(cell => cell.highlight)
         if (highlightCell) {
-            Renderer.rect(ctx, highlightCell.x * this.cellWidth, highlightCell.y * this.cellHeight, this.cellWidth * highlightCell.width - .15, this.cellHeight * highlightCell.height - .15, {
+            Renderer.rect(ctx, highlightCell.x * this.cellWidth, highlightCell.y * this.cellHeight, this.cellWidth - .15, this.cellHeight - .15, {
                 transparency: .25,
                 strokeStyle: color.highlightTransparent,
                 fillStyle: color.highlightTransparent,
                 lineWidth: 0
+            })
+        }
+        const focusCell: Cell = this.grid.focusCell
+        if (focusCell) {
+            Renderer.rect(ctx, focusCell.x * this.cellWidth, focusCell.y * this.cellWidth, this.cellWidth, this.cellWidth, {
+                transparency: 1,
+                strokeStyle: color.highlight,
+                fillStyle: 'transparent',
+                lineWidth: 2.5
             })
         }
     }
