@@ -62,11 +62,8 @@ export class Env {
     }
 
     setPath(path: Path): void {
-        if (!this.path) {
-            this.path = path
-        } else {
-            path.points.forEach(point => this.path.addPoint(point))
-        }
+        this.path = path
+        this.path.recalculate()
         this.defineCellsType()
     }
 
@@ -75,26 +72,17 @@ export class Env {
     }
 
     defineCellsType(): void {
-        if (!this.path || this.path.points.length < 2) return
-        let nodeIndex: number = 0
-        const eps: number = 2
-        let x = this.path.points[0].x
-        let y = this.path.points[0].y
-        for (let i = 0; i < 2000; i++) {
-            const deltaX: number = this.path.points[nodeIndex + 1].x - this.path.points[nodeIndex].x
-            const deltaY: number = this.path.points[nodeIndex + 1].y - this.path.points[nodeIndex].y
-            const slope: number = Math.sqrt(deltaX ** 2 + deltaY ** 2)
-            const angle: number = Math.atan2(deltaY, deltaX)
-            x += slope * Math.cos(angle) * 0.04
-            y += slope * Math.sin(angle) * 0.04
-            const cell: Cell = this.getCell(x, y)
-            if (cell) {
-                cell.type = CellType.Road
-            }
-            if (Math.abs(x - this.path.points[nodeIndex + 1].x) < eps &&
-                Math.abs(y - this.path.points[nodeIndex + 1].y) < eps) {
-                if (nodeIndex + 1 < this.path.points.length - 1) { nodeIndex++ }
-                else { break }
+        this.grid.cells.forEach(cell => cell.type = CellType.Ground)
+        if (this.path.points.length) {
+            let percent: number = 0
+            const deltaPercent: number = this.cellWidth / 2 / this.path.length * 100
+            while (percent <= 100) {
+                const { x, y } = this.path.pointAt(percent)
+                const cell: Cell = this.getCell(x, y)
+                if (cell) {
+                    cell.type = CellType.Road
+                }
+                percent += deltaPercent
             }
         }
     }
@@ -129,6 +117,7 @@ export class Env {
             }
         }
     }
+
     handleKeyDown(e: KeyboardEvent): void {
         switch (e.code) {
             case 'Space':
@@ -137,6 +126,10 @@ export class Env {
                 break
             case 'Enter':
                 this.saveMap('test2.map')
+                e.preventDefault()
+                break
+            case 'Backspace':
+                this.setPath(new Path([]))
                 e.preventDefault()
                 break
         }
@@ -161,7 +154,7 @@ export class Env {
         statsPannel.style.left = `${x + 10}px`
         statsPannel.style.top = `${y + 10}px`
         statsPannel.style.display = 'block'
-        statsPannel.style.opacity = .9
+        statsPannel.style.opacity = '.9'
         statsPannel.innerHTML = `
             <li>Health   : ${turret.health}%</li>
             <li>Radius   : ${turret.radius}px</li>
@@ -172,7 +165,7 @@ export class Env {
     hideStats(): void {
         const statsPannel: HTMLElement = document.querySelector('.floating-stats')
         statsPannel.style.display = 'none'
-        statsPannel.style.opacity = 0
+        statsPannel.style.opacity = '0'
     }
 
     update() {

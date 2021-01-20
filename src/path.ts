@@ -29,6 +29,7 @@ class Path {
     addPoint(point: Point): void {
         if (!this.entry) this.entry = point
         this.points.push(point)
+        this.end = this.points[this.points.length - 1]
         this.recalculate()
     }
 
@@ -40,16 +41,21 @@ class Path {
         this.end = this.points[this.points.length - 1]
         this.svg = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         this.svg.setAttribute('d', this.toSVGPath())
+        this.length = this.svg.getTotalLength()
     }
 
     toSVGPath(): string {
         const builder: PathBuilder = new PathBuilder()
-        const path = builder.moveTo(this.entry.x, this.entry.y)
-        for (let i = 1; i < this.points.length; i++) {
-            path.lineTo(this.points[i].x, this.points[i].y) // smoothTo ?
+        if (this.points.length) {
+            const path = builder.moveTo(this.entry.x, this.entry.y)
+            for (let i = 1; i < this.points.length; i++) {
+                path.lineTo(this.points[i].x, this.points[i].y) // smoothTo ?
+            }
+            const stringPath: string = path.toString()
+            return stringPath
+        } else {
+            return 'M 0 0'
         }
-        const stringPath: string = path.toString()
-        return stringPath
     }
 
     render(ctx: CanvasRenderingContext2D): void {

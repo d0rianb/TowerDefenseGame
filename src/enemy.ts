@@ -14,7 +14,6 @@ export class Enemy {
     health: number
     alive: boolean
 
-
     constructor(env: Env, health: number) {
         this.env = env
         this.path = this.env.path
@@ -40,7 +39,7 @@ export class Enemy {
     }
 
     nextPos(iteration: number = 1) {
-        let nextPercent = this.path.length * this.speed * 1e-5 * iteration
+        let nextPercent: number = this.path.length * this.speed * 1e-5 * iteration
         return this.path.pointAt(this.percent + nextPercent)
     }
 

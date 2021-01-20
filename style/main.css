@@ -51,7 +51,7 @@ canvas {
   transition: 200ms;
 }
 
-.stats {
+.floating-stats {
   position: absolute;
   z-index: 10;
   top: 0;
@@ -64,10 +64,14 @@ canvas {
   transition: opacity 150ms ease;
 }
 
-.stats li {
+.floating-stats li {
   font-size: 0.9em;
   font-family: sans-serif;
   font-weight: 300;
   list-style: none;
   color: #eee;
+}
+
+.control-pannel {
+  position: absolute;
 }
