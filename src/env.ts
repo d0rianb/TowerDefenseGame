@@ -4,7 +4,7 @@ import { Grid, Cell, CellType } from './grid'
 import { Path, Point, Vector2 } from './path'
 import { Renderer } from './render'
 import { Turret, Shot } from './turret'
-import { Enemy } from './enemy'
+import { Enemy, EnemyGenerator } from './enemy'
 import { Interface } from './interface'
 import * as color from '../ressources/color.json'
 
@@ -17,6 +17,7 @@ export class Env {
     cellHeight: number
     turrets: Array<Turret>
     enemies: Array<Enemy>
+    enemyGenerator: EnemyGenerator
     shots: Array<Shot>
     health: number
     path: Path
@@ -28,11 +29,16 @@ export class Env {
         this.height = this.canvas.height
         this.turrets = []
         this.enemies = []
+        this.enemyGenerator = new EnemyGenerator(this)
         this.shots = []
         this.health = 1000 // hp
         this.cellWidth = Math.min(this.width / this.grid.rows, this.height / this.grid.cols)
         this.cellHeight = this.cellWidth
         this.path = undefined
+    }
+
+    start(): void {
+        this.enemyGenerator.start()
     }
 
     loadMap(filename: string): void {
@@ -68,7 +74,7 @@ export class Env {
     }
 
     spawnEnemy(): void {
-        this.enemies.push(new Enemy(this, 100))
+        this.enemyGenerator.spawn()
     }
 
     defineCellsType(): void {

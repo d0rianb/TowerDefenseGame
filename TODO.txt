@@ -1,6 +1,8 @@
 TODO :
- - path serialization - (json - custom format)
  - map editor
  - fix turret shadow issue
  - add version check to map
  - destroy shoot when out of bounds
+ - introduce cost
+ - map decorations
+ - turret ameliorations

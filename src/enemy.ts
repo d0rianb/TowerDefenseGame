@@ -8,7 +8,7 @@ interface MovementObject {
     startTime: number
 }
 
-export class Enemy {
+class Enemy {
     env: Env
     path: Path
     pos: Point
@@ -78,3 +78,26 @@ export class Enemy {
         Renderer.circle(ctx, this.pos.x, this.pos.y, this.radius, { strokeStyle: 'red', lineWidth: 2 })
     }
 }
+
+class EnemyGenerator {
+    env: Env
+    spawnRate: number //s
+    amount: number
+
+    constructor(env: Env, spawnRate: number = 1000, amount: number = 1) {
+        this.env = env
+        this.spawnRate = spawnRate
+        this.amount = amount
+    }
+
+    start(): void {
+        window.setInterval(() => this.spawn(), this.spawnRate)
+    }
+
+    spawn(): void {
+        this.env.enemies.push(new Enemy(this.env, 100))
+    }
+
+}
+
+export { Enemy, EnemyGenerator }

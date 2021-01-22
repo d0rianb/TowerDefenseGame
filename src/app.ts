@@ -36,6 +36,8 @@ const path: Path = new Path([entryPoint])
 // Load Map
 env.loadMap('test3.map')
 progressBar.value += 10
+env.start()
+progressBar.value += 10
 loadingScreen.style.display = 'none'
 
 
