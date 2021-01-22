@@ -39,9 +39,12 @@ class Enemy {
 
     move(): void {
         if (!this.movement.duration) { this.movement.duration = this.path.length / this.movement.speed }
-        const pos = this.nextPos()
-        this.pos.x = pos.x
-        this.pos.y = pos.y
+        const nextPos = this.nextPos()
+        if (this.pos.x === nextPos.x && this.pos.y === nextPos.y) {
+            return this.env.hasReachEnd(this)
+        }
+        this.pos.x = nextPos.x
+        this.pos.y = nextPos.y
         this.percent += (Date.now() - this.movement.startTime) / this.movement.duration / 10
 
         // Angle calculation
@@ -95,6 +98,7 @@ class EnemyGenerator {
     }
 
     spawn(): void {
+        if (!this.env.path) return
         this.env.enemies.push(new Enemy(this.env, 100))
     }
 

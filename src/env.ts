@@ -25,20 +25,20 @@ export class Env {
     constructor(grid: Grid, canvas: HTMLCanvasElement) {
         this.grid = grid
         this.canvas = canvas
-        this.width = this.canvas.width
-        this.height = this.canvas.height
+        this.width = this.canvas.width / window.devicePixelRatio
+        this.height = this.canvas.height / window.devicePixelRatio
         this.turrets = []
         this.enemies = []
         this.enemyGenerator = new EnemyGenerator(this)
         this.shots = []
         this.health = 1000 // hp
-        this.cellWidth = Math.min(this.width / this.grid.rows, this.height / this.grid.cols)
+        this.cellWidth = Math.min(this.canvas.width / this.grid.rows, this.canvas.height / this.grid.cols)
         this.cellHeight = this.cellWidth
         this.path = undefined
     }
 
     start(): void {
-        this.enemyGenerator.start()
+        // this.enemyGenerator.start()
     }
 
     loadMap(filename: string): void {
@@ -165,6 +165,17 @@ export class Env {
         Interface.turretHoverStats = turret.getStats()
     }
 
+    hasReachEnd(enemy: Enemy): void {
+        this.enemies = this.enemies.filter(e => e != enemy)
+    }
+
+    manageShots(): void {
+        this.shots = this.shots.filter(shot => {
+            return shot.pos.x >= -shot.length && shot.pos.x <= this.width + shot.length
+                && shot.pos.y >= -shot.length && shot.pos.y <= this.height + shot.length
+        })
+    }
+
     hideStats(): void {
         Interface.turretHoverStats = undefined
     }
@@ -190,6 +201,7 @@ export class Env {
         this.turrets.forEach(turret => turret.update())
         this.shots.forEach(shot => shot.update())
         this.enemies = this.enemies.filter(enemy => enemy.alive)
+        this.manageShots()
         this.updateControlPannel()
         this.render()
         window.requestAnimationFrame(() => this.update())
@@ -197,7 +209,7 @@ export class Env {
 
     render() {
         const ctx: CanvasRenderingContext2D = this.canvas.getContext('2d')
-        ctx.clearRect(0, 0, this.width, this.height)
+        ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
         let fillColor: string = color.bg
         this.grid.cells.forEach(cell => {
             if (cell.type === CellType.Turret) {
