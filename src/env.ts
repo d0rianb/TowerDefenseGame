@@ -1,4 +1,5 @@
 import { saveAs } from 'file-saver';
+import Stats from 'stats.js'
 
 import { Grid, Cell, CellType } from './grid'
 import { Path, Point, Vector2 } from './path'
@@ -7,6 +8,10 @@ import { Turret, Shot } from './turret'
 import { Enemy, EnemyGenerator } from './enemy'
 import { Interface } from './interface'
 import * as color from '../ressources/color.json'
+
+const stats = new Stats()
+stats.showPanel(0)
+document.querySelector('.fps').appendChild(stats.dom)
 
 export class Env {
     grid: Grid
@@ -197,6 +202,7 @@ export class Env {
     }
 
     update() {
+        stats.begin()
         this.enemies.forEach(enemy => enemy.update())
         this.turrets.forEach(turret => turret.update())
         this.shots.forEach(shot => shot.update())
@@ -204,6 +210,7 @@ export class Env {
         this.manageShots()
         this.updateControlPannel()
         this.render()
+        stats.end()
         window.requestAnimationFrame(() => this.update())
     }
 
@@ -211,23 +218,18 @@ export class Env {
         const ctx: CanvasRenderingContext2D = this.canvas.getContext('2d')
         ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
         let fillColor: string = color.bg
-        this.grid.cells.forEach(cell => {
-            if (cell.type === CellType.Turret) {
-                fillColor = color.turret
-            } else if (cell.type === CellType.Road) {
-                fillColor = color.road
-            } else if (cell.type === CellType.Ground) {
-                fillColor = color.ground
-            } else {
-                fillColor = color.bg
-            }
-            Renderer.rect(ctx, cell.x * this.cellWidth, cell.y * this.cellHeight, this.cellWidth * cell.width - .15, this.cellHeight * cell.height - .15, {
-                transparency: 1,
-                fillStyle: fillColor,
-                strokeStyle: color.secondary,
-                lineWidth: .5
-            })
+        const groundCells: Array<Cell> = this.grid.cells.filter(cell => cell.type === CellType.Ground)
+        const roadCells: Array<Cell> = this.grid.cells.filter(cell => cell.type === CellType.Road)
+        Renderer.style(ctx, {
+            transparency: 1,
+            fillStyle: color.ground,
+            strokeStyle: color.secondary,
+            lineWidth: .5
         })
+        groundCells.forEach((cell, i) => Renderer.rect(ctx, cell.x * this.cellWidth, cell.y * this.cellHeight, this.cellWidth * cell.width - .15, this.cellHeight * cell.height - .15, {}, true))
+        Renderer.style(ctx, { fillStyle: color.road, strokeStyle: color.secondary, lineWidth: .5 })
+        roadCells.forEach((cell, i) => Renderer.rect(ctx, cell.x * this.cellWidth, cell.y * this.cellHeight, this.cellWidth * cell.width - .15, this.cellHeight * cell.height - .15, {}, true))
+
         if (this.path) { this.path.render(ctx) }
         this.enemies.forEach(enemy => enemy.render(ctx))
         this.shots.forEach(shot => shot.render(ctx))

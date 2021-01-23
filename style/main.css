@@ -110,3 +110,13 @@ h2 {
 .turret-stats .stats li {
   padding: 0.25em;
 }
+
+.fps  {
+  display: inline-block;
+  position: absolute;
+  top: 0;
+  right: 0;
+  color: #fff;
+  padding: 1em;
+  z-index: 10;
+}

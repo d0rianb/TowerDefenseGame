@@ -17,6 +17,10 @@ const defaultStyleObject: StyleObject = {
     transparency: 1
 }
 
+function round(num: number): number {
+    return ~~(num + .5)
+}
+
 class Renderer {
 
     static style(ctx: CanvasRenderingContext2D, obj?: StyleObject): void {
@@ -31,24 +35,25 @@ class Renderer {
     static line(ctx: CanvasRenderingContext2D, point1: Point, point2: Point, obj?: StyleObject): void {
         Renderer.style(ctx, obj)
         ctx.beginPath()
-        ctx.moveTo(point1.x, point1.y)
-        ctx.lineTo(point2.x, point2.y)
+        ctx.moveTo(round(point1.x), round(point1.y))
+        ctx.lineTo(round(point2.x), round(point2.y))
         ctx.stroke()
     }
 
-    static rect(ctx: CanvasRenderingContext2D, x: number, y: number, width: number, height: number, obj?: StyleObject): void {
-        Renderer.style(ctx, obj)
-        ctx.fillRect(x, y, width, height)
-        ctx.strokeRect(x, y, width, height)
+    static rect(ctx: CanvasRenderingContext2D, x: number, y: number, width: number, height: number, obj?: StyleObject, noStyle?: boolean): void {
+        if (!noStyle) Renderer.style(ctx, obj)
+        const [r_x, r_y, r_w, r_h] = [round(x), round(y), round(width), round(height)]
+        ctx.fillRect(r_x, r_y, r_w, r_h)
+        ctx.strokeRect(r_x, r_y, r_w, r_h)
     }
 
     static poly(ctx: CanvasRenderingContext2D, points: Array<Point>, obj?: StyleObject) {
         Renderer.style(ctx, obj)
         ctx.beginPath()
         if (!points.length) return
-        ctx.moveTo(points[0].x, points[0].y)
+        ctx.moveTo(round(points[0].x), round(points[0].y))
         for (let i = 1; i < points.length; i++) {
-            ctx.lineTo(points[i].x, points[i].y)
+            ctx.lineTo(round(points[i].x), round(points[i].y))
         }
         ctx.stroke()
     }
@@ -56,7 +61,7 @@ class Renderer {
     static circle(ctx: CanvasRenderingContext2D, x: number, y: number, radius: number, obj?: StyleObject) {
         Renderer.style(ctx, obj)
         ctx.beginPath()
-        ctx.arc(x, y, radius, 0, 2 * Math.PI)
+        ctx.arc(round(x), round(y), radius, 0, 2 * Math.PI)
         ctx.stroke()
     }
 
@@ -67,15 +72,15 @@ class Renderer {
     static rectSprite(ctx: CanvasRenderingContext2D, x: number, y: number, width: number, height: number, texture: Texture): void {
         Renderer.style(ctx, {})
         ctx.save()
-        ctx.translate(x + width / 2, y + height / 2)
+        ctx.translate(round(x + width / 2), round(y + height / 2))
         ctx.scale(texture.scale.x, texture.scale.y)
         ctx.rotate(texture.rotation)
         ctx.drawImage(
             texture.image,
-            width * texture.offset.x - width / 2,
-            height * texture.offset.y - height / 2,
-            width,
-            height
+            round(width * texture.offset.x - width / 2),
+            round(height * texture.offset.y - height / 2),
+            round(width),
+            round(height)
         )
         ctx.restore()
     }

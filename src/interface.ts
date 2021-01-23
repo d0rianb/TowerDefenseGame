@@ -5,7 +5,11 @@ export const Interface = new Vue({
     data() {
         return {
             turretStats: null,
-            turretHoverStats: null
+            turretHoverStats: null,
+            frameTime: 0,
         }
+    },
+    computed: {
+        fps() { return `${(1000 / this.frameTime).toFixed(0)} fps` }
     }
 })
