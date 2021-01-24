@@ -120,3 +120,12 @@ h2 {
   padding: 1em;
   z-index: 10;
 }
+
+.money {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 0.5em;
+  color: #fff;
+  font-weight: 300;
+}

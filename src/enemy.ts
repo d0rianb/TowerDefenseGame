@@ -18,6 +18,7 @@ class Enemy {
     percent: number
     angle: number
     health: number
+    money: number
     alive: boolean
 
     constructor(env: Env, health: number) {
@@ -33,6 +34,7 @@ class Enemy {
         }
         this.health = health
         this.alive = true
+        this.money = 25
         this.percent = 0
         this.angle = 0
     }
@@ -62,9 +64,12 @@ class Enemy {
         this.env.shots.forEach(shot => {
             if (this.pos.dist(shot.pos) < this.radius) {
                 this.health -= shot.damage
+                shot.turret.damageDone += shot.damage
                 this.env.shots = this.env.shots.filter(envShot => envShot !== shot)
                 if (this.health <= 0) {
                     this.alive = false
+                    shot.turret.kills += 1
+                    this.env.onKill(this)
                 }
                 return true
             }

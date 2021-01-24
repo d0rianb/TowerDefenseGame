@@ -26,6 +26,7 @@ export class Env {
     shots: Array<Shot>
     health: number
     path: Path
+    money: number
 
     constructor(grid: Grid, canvas: HTMLCanvasElement) {
         this.grid = grid
@@ -40,6 +41,7 @@ export class Env {
         this.cellWidth = Math.min(this.canvas.width / this.grid.rows, this.canvas.height / this.grid.cols)
         this.cellHeight = this.cellWidth
         this.path = undefined
+        this.money = 100
     }
 
     start(): void {
@@ -82,6 +84,14 @@ export class Env {
         this.enemyGenerator.spawn()
     }
 
+    hasReachEnd(enemy: Enemy): void {
+        this.enemies = this.enemies.filter(e => e != enemy)
+    }
+
+    onKill(enemy: Enemy): void {
+        this.money += enemy.money
+    }
+
     defineCellsType(): void {
         this.grid.cells.forEach(cell => cell.type = CellType.Ground)
         if (this.path.points.length) {
@@ -120,9 +130,9 @@ export class Env {
             cell.highlight = true
             if (cell.type == CellType.Turret) {
                 const turret: Turret = this.turrets.find(turret => turret.cell === cell)
-                this.displayStats(e, turret)
+                this.displayHoverStats(e, turret)
             } else {
-                this.hideStats()
+                this.hideHoverStats()
             }
         }
     }
@@ -152,8 +162,10 @@ export class Env {
             return
         }
         if (cell && (cell.type === CellType.Empty || cell.type === CellType.Ground)) {
-            cell.type = CellType.Turret
-            this.turrets.push(new Turret(cell, this))
+            const turret = new Turret(cell, this)
+            if (turret.build()) {
+                cell.type = CellType.Turret
+            }
         }
         if (cell && cell.type == CellType.Turret) {
             this.grid.focusCell = cell
@@ -162,16 +174,14 @@ export class Env {
         }
     }
 
-    displayStats(e: MouseEvent, turret: Turret): void {
+    displayHoverStats(e: MouseEvent, turret: Turret): void {
         const { x, y } = e
         const statsPannel: HTMLElement = document.querySelector('.floating-stats')
-        statsPannel.style.left = `${x + 10}px`
-        statsPannel.style.top = `${y + 10}px`
-        Interface.turretHoverStats = turret.getStats()
-    }
-
-    hasReachEnd(enemy: Enemy): void {
-        this.enemies = this.enemies.filter(e => e != enemy)
+        if (statsPannel) {
+            statsPannel.style.left = `${x + 10}px`
+            statsPannel.style.top = `${y + 10}px`
+            Interface.turretHoverStats = turret.getStats()
+        }
     }
 
     manageShots(): void {
@@ -181,21 +191,23 @@ export class Env {
         })
     }
 
-    hideStats(): void {
+    hideHoverStats(): void {
         Interface.turretHoverStats = undefined
     }
 
-    updateControlPannel(): void {
-        const controlPannel: HTMLElement = document.querySelector('.control-pannel')
+    updateInterface(): void {
         const controlPannelCanvas: HTMLCanvasElement = document.querySelector('#turret-viewer')
-        const controlPannelStats: HTMLElement = document.querySelector('.control-pannel .turret-stats')
 
-        if (this.grid.focusCell) {
+        Interface.money = this.money
+
+        if (this.grid.focusCell && controlPannelCanvas) {
             const controlPannelCanvasCtx: CanvasRenderingContext2D = controlPannelCanvas.getContext('2d')
             controlPannelCanvasCtx.clearRect(0, 0, 120, 120)
             const turret: Turret = this.turrets.find(turret => turret.cell === this.grid.focusCell)
-            turret.render(controlPannelCanvasCtx, true)
-            Interface.turretStats = turret.getStats()
+            if (turret) {
+                turret.render(controlPannelCanvasCtx, true)
+                Interface.turretStats = turret.getStats()
+            }
         } else {
             Interface.turretStats = null
         }
@@ -208,7 +220,7 @@ export class Env {
         this.shots.forEach(shot => shot.update())
         this.enemies = this.enemies.filter(enemy => enemy.alive)
         this.manageShots()
-        this.updateControlPannel()
+        this.updateInterface()
         this.render()
         stats.end()
         window.requestAnimationFrame(() => this.update())
@@ -216,7 +228,7 @@ export class Env {
 
     render() {
         const ctx: CanvasRenderingContext2D = this.canvas.getContext('2d')
-        ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
+        Renderer.clear(ctx)
         let fillColor: string = color.bg
         const groundCells: Array<Cell> = this.grid.cells.filter(cell => cell.type === CellType.Ground)
         const roadCells: Array<Cell> = this.grid.cells.filter(cell => cell.type === CellType.Road)

@@ -6,4 +6,7 @@ TODO :
  - introduce cost
  - map decorations
  - turret ameliorations
- - batch line render
+ - README.md
+ - render optimization with last styleObject comparaison
+ - setup Vite
+ - reRender zone --> optimization

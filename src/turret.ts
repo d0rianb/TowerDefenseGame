@@ -6,11 +6,14 @@ import { Renderer } from './render'
 
 import { TURRET_BASE_TEXTURE, TURRET_HEAD_TEXTURE } from './texture'
 
-interface StatsObejct {
+interface StatsObject {
     health: number
     radius: number
     damage: number
     fireRate: number
+    cost: number
+    kills: number
+    damageDone: number
 }
 
 class Turret {
@@ -25,6 +28,9 @@ class Turret {
     canShoot: boolean
     dir: number
     fireRate: number
+    cost: number
+    kills: number
+    damageDone: number
 
     constructor(cell: Cell, env: Env) {
         this.cell = cell
@@ -38,23 +44,37 @@ class Turret {
         this.canShoot = true
         this.dir = -Math.PI / 2
         this.fireRate = 100 // each ms
+        this.cost = 100
+        this.kills = 0
+        this.damageDone = 0
+    }
+
+    build(): boolean {
+        if (this.env.money >= this.cost) {
+            this.env.turrets.push(this)
+            this.env.money -= this.cost
+            return true
+        }
+        return false
     }
 
     shoot(): void {
-        // TODO: predict position
-        this.env.shots.push(new Shot(<Point>{ ...this.pos }, this.dir, this.damage))
+        this.env.shots.push(new Shot(this, <Point>{ ...this.pos }, this.dir, this.damage))
         this.canShoot = false
         window.setTimeout(() => {
             this.canShoot = true
         }, this.fireRate)
     }
 
-    getStats(): StatsObejct {
+    getStats(): StatsObject {
         return {
             health: this.health,
             radius: this.radius,
             damage: this.damage,
-            fireRate: this.fireRate
+            fireRate: this.fireRate,
+            cost: this.cost,
+            kills: this.kills,
+            damageDone: this.damageDone
         }
     }
 
@@ -90,13 +110,15 @@ class Turret {
 }
 
 class Shot {
+    turret: Turret
     pos: Point
     dir: number
     damage: number
     length: number
     speed: number
 
-    constructor(pos: Point, dir: number, damage: number = 10) {
+    constructor(turret: Turret, pos: Point, dir: number, damage: number = 10) {
+        this.turret = turret
         this.pos = pos
         this.dir = dir
         this.damage = damage

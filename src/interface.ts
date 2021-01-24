@@ -7,6 +7,7 @@ export const Interface = new Vue({
             turretStats: null,
             turretHoverStats: null,
             frameTime: 0,
+            money: 0
         }
     },
     computed: {

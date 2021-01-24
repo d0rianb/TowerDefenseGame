@@ -9,6 +9,10 @@ interface StyleObject {
     transparency?: number
 }
 
+interface RendererInterface {
+    renderArea?: any
+}
+
 const defaultStyleObject: StyleObject = {
     strokeStyle: 'black',
     lineWidth: 4,
@@ -17,19 +21,29 @@ const defaultStyleObject: StyleObject = {
     transparency: 1
 }
 
+// Move to math file ?
 function round(num: number): number {
-    return ~~(num + .5)
+    const precision: number = 2 * (window.devicePixelRatio || 1)
+    // return ~~(num + .5)
+    // return (num + 0.5) << 0
+    return Math.round(num * precision) / precision // TODO: bitwise operations
+    // return (2 * num + 1) / 2 | 0
 }
 
-class Renderer {
+class Renderer implements RendererInterface {
 
     static style(ctx: CanvasRenderingContext2D, obj?: StyleObject): void {
         const styleObject = { ...defaultStyleObject, ...obj }
+        // ctx = { ...ctx, ...styleObject }
         ctx.lineWidth = styleObject.lineWidth
         ctx.strokeStyle = styleObject.strokeStyle
         ctx.lineJoin = styleObject.lineJoin
         ctx.fillStyle = styleObject.fillStyle
         ctx.globalAlpha = styleObject.transparency
+    }
+
+    static clear(ctx: CanvasRenderingContext2D): void {
+        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
     }
 
     static line(ctx: CanvasRenderingContext2D, point1: Point, point2: Point, obj?: StyleObject): void {
@@ -47,10 +61,10 @@ class Renderer {
         ctx.strokeRect(r_x, r_y, r_w, r_h)
     }
 
-    static poly(ctx: CanvasRenderingContext2D, points: Array<Point>, obj?: StyleObject) {
+    static poly(ctx: CanvasRenderingContext2D, points: Array<Point>, obj?: StyleObject): void {
+        if (!points.length) return
         Renderer.style(ctx, obj)
         ctx.beginPath()
-        if (!points.length) return
         ctx.moveTo(round(points[0].x), round(points[0].y))
         for (let i = 1; i < points.length; i++) {
             ctx.lineTo(round(points[i].x), round(points[i].y))
@@ -58,7 +72,7 @@ class Renderer {
         ctx.stroke()
     }
 
-    static circle(ctx: CanvasRenderingContext2D, x: number, y: number, radius: number, obj?: StyleObject) {
+    static circle(ctx: CanvasRenderingContext2D, x: number, y: number, radius: number, obj?: StyleObject): void {
         Renderer.style(ctx, obj)
         ctx.beginPath()
         ctx.arc(round(x), round(y), radius, 0, 2 * Math.PI)
@@ -75,6 +89,7 @@ class Renderer {
         ctx.translate(round(x + width / 2), round(y + height / 2))
         ctx.scale(texture.scale.x, texture.scale.y)
         ctx.rotate(texture.rotation)
+        // console.log(width * texture.offset.x - width / 2, round(width * texture.offset.x - width / 2))
         ctx.drawImage(
             texture.image,
             round(width * texture.offset.x - width / 2),

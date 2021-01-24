@@ -26,6 +26,7 @@
       <li>FireRate : {{ turretHoverStats?.fireRate }}</li>
     </div>
 
+    <div class="money">{{ money }}$</div>
     <div class="control-pannel" v-show="turretStats">
       <h2>Control Pannel</h2>
       <div class="turret-view">
@@ -36,6 +37,9 @@
         <li>Radius : {{ turretStats?.radius }}px</li>
         <li>Damage : {{ turretStats?.damage }}</li>
         <li>FireRate : {{ turretStats?.fireRate }}</li>
+        <li>Cost : {{ turretStats?.cost }}$</li>
+        <li>Kills : {{ turretStats?.kills }}</li>
+        <li>Damage : {{ turretStats?.damageDone }}</li>
       </div>
       <div class="turret-actions">
       </div>
