@@ -1,16 +1,20 @@
 import Vue from 'vue'
 
+function blink(el, className) {
+    document.querySelector(el).classList.toggle(className)
+    setTimeout(() => document.querySelector(el).classList.toggle(className), 300)
+}
+
 export const Interface = new Vue({
     el: '#app',
     data() {
         return {
             turretStats: null,
             turretHoverStats: null,
-            frameTime: 0,
             money: 0
         }
     },
-    computed: {
-        fps() { return `${(1000 / this.frameTime).toFixed(0)} fps` }
+    methods: {
+        blinkCostRed() { return blink('.money', 'red') }
     }
 })

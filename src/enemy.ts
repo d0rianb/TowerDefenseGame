@@ -91,20 +91,38 @@ class EnemyGenerator {
     env: Env
     spawnRate: number //s
     amount: number
+    interval: number
+    count: number
 
     constructor(env: Env, spawnRate: number = 1000, amount: number = 1) {
         this.env = env
         this.spawnRate = spawnRate
         this.amount = amount
+        this.interval = undefined
+        this.count = 0
     }
 
     start(): void {
-        window.setInterval(() => this.spawn(), this.spawnRate)
+        this.stop()
+        this.interval = window.setInterval(() => this.spawn(), this.spawnRate)
+    }
+
+    stop(): void {
+        if (this.interval) {
+            window.clearInterval(this.interval)
+            this.interval = undefined
+        }
     }
 
     spawn(): void {
         if (!this.env.path) return
-        this.env.enemies.push(new Enemy(this.env, 100))
+        this.env.enemies.push(new Enemy(this.env, 100 + 5 * this.count))
+        this.count++
+        if (this.count % 6 == 0) {
+            this.spawnRate = Math.max(this.spawnRate - 50, 100)
+            console.log('increase Spawn rate to ', this.spawnRate)
+            this.start()
+        }
     }
 
 }

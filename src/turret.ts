@@ -3,6 +3,7 @@ import { Point } from './path'
 import { Env } from './env'
 import { Enemy } from './enemy'
 import { Renderer } from './render'
+import { Interface } from './interface'
 
 import { TURRET_BASE_TEXTURE, TURRET_HEAD_TEXTURE } from './texture'
 
@@ -55,6 +56,7 @@ class Turret {
             this.env.money -= this.cost
             return true
         }
+        Interface.blinkCostRed()
         return false
     }
 
@@ -132,7 +134,7 @@ class Shot {
     }
 
     render(ctx: CanvasRenderingContext2D) {
-        Renderer.line(ctx, this.pos, new Point(this.pos.x + this.length * Math.cos(this.dir), this.pos.y + this.length * Math.sin(this.dir)), { lineWidth: 2, strokeStyle: 'black' })
+        Renderer.line(ctx, this.pos, new Point(this.pos.x + this.length * Math.cos(this.dir), this.pos.y + this.length * Math.sin(this.dir)), { lineWidth: 2.5, strokeStyle: 'rgb(230, 118, 14)' })
     }
 }
 

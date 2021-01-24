@@ -128,4 +128,10 @@ h2 {
   padding: 0.5em;
   color: #fff;
   font-weight: 300;
+  font-size: 1.1rem;
+  transition: color 250ms ease;
+}
+
+.red {
+  color: #e60e3d;
 }

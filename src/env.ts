@@ -45,7 +45,7 @@ export class Env {
     }
 
     start(): void {
-        // this.enemyGenerator.start()
+        this.enemyGenerator.start()
     }
 
     loadMap(filename: string): void {
