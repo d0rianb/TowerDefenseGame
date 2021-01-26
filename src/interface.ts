@@ -9,12 +9,14 @@ export const Interface = new Vue({
     el: '#app',
     data() {
         return {
-            turretStats: null,
-            turretHoverStats: null,
+            turretObject: null,
+            turretHoverObject: null,
             money: 0
         }
     },
     methods: {
-        blinkCostRed() { return blink('.money', 'red') }
+        blinkCostRed() { return blink('.money', 'red') },
+        upgradeTurret() { this.turretObject.upgrade() },
+        deleteTurret() { this.turretObject.delete() }
     }
 })

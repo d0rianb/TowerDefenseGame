@@ -7,19 +7,26 @@ import { Interface } from './interface'
 
 import { TURRET_BASE_TEXTURE, TURRET_HEAD_TEXTURE } from './texture'
 
-interface StatsObject {
+interface SerializeObject {
+    id: number
     health: number
+    level: number
     radius: number
     damage: number
     fireRate: number
     cost: number
     kills: number
     damageDone: number
+    upgradeCost: number
+    upgrade: Function
+    delete: Function
 }
 
 class Turret {
+    id: number
     cell: Cell
     env: Env
+    level: number
     origin: Point
     pos: Point
     health: number
@@ -29,13 +36,16 @@ class Turret {
     canShoot: boolean
     dir: number
     fireRate: number
+    upgradeCost: number
     cost: number
     kills: number
     damageDone: number
 
-    constructor(cell: Cell, env: Env) {
+    constructor(id: number, cell: Cell, env: Env) {
+        this.id = id
         this.cell = cell
         this.env = env
+        this.level = 1
         this.origin = new Point(this.cell.x * this.env.cellWidth, this.cell.y * this.env.cellWidth)
         this.pos = new Point((this.cell.x + 0.5) * this.env.cellWidth, (this.cell.y + 0.5) * this.env.cellWidth)
         this.health = 100
@@ -44,8 +54,9 @@ class Turret {
         this.target = undefined
         this.canShoot = true
         this.dir = -Math.PI / 2
-        this.fireRate = 100 // each ms
-        this.cost = 100
+        this.fireRate = 5 // each s
+        this.upgradeCost = 25
+        this.cost = 125
         this.kills = 0
         this.damageDone = 0
     }
@@ -60,23 +71,48 @@ class Turret {
         return false
     }
 
+    upgrade(): boolean {
+        if (this.env.money < this.upgradeCost) {
+            Interface.blinkCostRed()
+            return false
+        }
+        this.env.money -= this.upgradeCost
+        this.level++
+        this.upgradeCost += 25
+        this.fireRate += .5
+        this.damage += 1.5
+        this.radius += 5
+        this.health += 25
+        return true
+    }
+
+    delete(): void {
+        this.env.turrets = this.env.turrets.filter(turret => turret !== this)
+        this.env.money += ~~(this.cost / 2)
+    }
+
     shoot(): void {
         this.env.shots.push(new Shot(this, <Point>{ ...this.pos }, this.dir, this.damage))
         this.canShoot = false
         window.setTimeout(() => {
             this.canShoot = true
-        }, this.fireRate)
+        }, 1000 / this.fireRate)
     }
 
-    getStats(): StatsObject {
+    serialize(): SerializeObject {
         return {
+            id: this.id,
+            level: this.level,
             health: this.health,
             radius: this.radius,
             damage: this.damage,
             fireRate: this.fireRate,
             cost: this.cost,
             kills: this.kills,
-            damageDone: this.damageDone
+            damageDone: this.damageDone,
+            upgradeCost: this.upgradeCost,
+            upgrade: () => this.upgrade(),
+            delete: () => this.delete()
         }
     }
 

@@ -28,7 +28,7 @@ class Enemy {
         this.pos = new Point(this.path.entry.x, this.path.entry.y)
         this.radius = 10
         this.movement = {
-            speed: 120, // m/s
+            speed: 100, // m/s
             duration: null,
             startTime: Date.now()
         }
@@ -116,11 +116,10 @@ class EnemyGenerator {
 
     spawn(): void {
         if (!this.env.path) return
-        this.env.enemies.push(new Enemy(this.env, 100 + 5 * this.count))
+        this.env.enemies.push(new Enemy(this.env, 50 + 5 * this.count))
         this.count++
-        if (this.count % 6 == 0) {
-            this.spawnRate = Math.max(this.spawnRate - 50, 100)
-            console.log('increase Spawn rate to ', this.spawnRate)
+        if (this.count % 10 == 0) {
+            this.spawnRate = Math.max(this.spawnRate - 25, 100)
             this.start()
         }
     }

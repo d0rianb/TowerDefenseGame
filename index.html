@@ -19,27 +19,37 @@
       <img src="./ressources/img/tdg-logo-2.png" alt="logo">
       <progress value="0" max="100">0%</progress>
     </div>
-    <div class="floating-stats stats" v-show="turretHoverStats">
-      <li>Health : {{ turretHoverStats?.health }}</li>
-      <li>Radius : {{ turretHoverStats?.radius }}px</li>
-      <li>Damage : {{ turretHoverStats?.damage }}</li>
-      <li>FireRate : {{ turretHoverStats?.fireRate }}</li>
+    <div class="floating-stats stats" v-show="turretHoverObject">
+      <li>Level : {{ turretHoverObject?.level }}</li>
+      <li>Health : {{ turretHoverObject?.health }}</li>
+      <li>Radius : {{ turretHoverObject?.radius }}px</li>
+      <li>Damage : {{ turretHoverObject?.damage }}</li>
+      <li>FireRate : {{ turretHoverObject?.fireRate }}</li>
     </div>
 
     <div class="money">{{ money }}$</div>
-    <div class="control-pannel" v-show="turretStats">
+    <div class="control-pannel" v-show="turretObject">
       <h2>Control Pannel</h2>
       <div class="turret-view">
         <canvas id="turret-viewer" width="120" height="120"></canvas>
       </div>
-      <div class="turret-stats stats" v-if="turretStats">
-        <li>Health : {{ turretStats?.health }}</li>
-        <li>Radius : {{ turretStats?.radius }}px</li>
-        <li>Damage : {{ turretStats?.damage }}</li>
-        <li>FireRate : {{ turretStats?.fireRate }}</li>
-        <li>Cost : {{ turretStats?.cost }}$</li>
-        <li>Kills : {{ turretStats?.kills }}</li>
-        <li>Damage : {{ turretStats?.damageDone }}</li>
+      <div class="actions">
+        <button type="button" name="upgrade" class="upgrade-button" @click="upgradeTurret">
+          Upgrade: {{ turretObject?.upgradeCost }}$
+        </button>
+        <button type="button" name="delete" class="delete-button" @click="deleteTurret">
+          Delete: {{ ~~(turretObject?.cost / 2) }}$
+        </button>
+      </div>
+      <div class="turret-stats stats">
+        <li>Level : {{ turretObject?.level }}</li>
+        <li>Health : {{ turretObject?.health }}</li>
+        <li>Radius : {{ turretObject?.radius }}px</li>
+        <li>Damage : {{ turretObject?.damage }}</li>
+        <li>FireRate : {{ turretObject?.fireRate }}</li>
+        <li>Cost : {{ turretObject?.cost }}$</li>
+        <li>Kills : {{ turretObject?.kills }}</li>
+        <li>Damage : {{ turretObject?.damageDone }}</li>
       </div>
       <div class="turret-actions">
       </div>

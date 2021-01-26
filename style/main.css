@@ -135,3 +135,34 @@ h2 {
 .red {
   color: #e60e3d;
 }
+
+.actions > button {
+  padding: 0.25em 0.5em;
+  margin: 0.25em 0;
+  color: #fff;
+  border-radius: 3px;
+  user-select: none;
+  transition: all 250ms ease;
+}
+
+.actions > button:focus {
+  outline: none;
+}
+
+.upgrade-button {
+  border: solid 1px #044030;
+  background-color: #076c50;
+}
+
+.upgrade-button:hover {
+  background-color: #044b38;
+}
+
+.delete-button {
+  border: solid 1px #990000;
+  background-color: #b74c4c;
+}
+
+.delete-button:hover {
+  background-color: #ad3232;
+}

@@ -41,7 +41,7 @@ export class Env {
         this.cellWidth = Math.min(this.canvas.width / this.grid.rows, this.canvas.height / this.grid.cols)
         this.cellHeight = this.cellWidth
         this.path = undefined
-        this.money = 100
+        this.money = 150
     }
 
     start(): void {
@@ -155,6 +155,7 @@ export class Env {
     }
 
     handleMouseClick(e: MouseEvent): void {
+        if (e.target !== this.canvas) return
         const cell: Cell = this.detectCell(e)
         if (e.shiftKey && this.path) {
             this.path.addPoint(new Point(e.clientX, e.clientY))
@@ -162,7 +163,7 @@ export class Env {
             return
         }
         if (cell && (cell.type === CellType.Empty || cell.type === CellType.Ground)) {
-            const turret = new Turret(cell, this)
+            const turret = new Turret(this.turrets.length, cell, this)
             if (turret.build()) {
                 cell.type = CellType.Turret
             }
@@ -180,7 +181,7 @@ export class Env {
         if (statsPannel) {
             statsPannel.style.left = `${x + 10}px`
             statsPannel.style.top = `${y + 10}px`
-            Interface.turretHoverStats = turret.getStats()
+            Interface.turretHoverObject = turret.serialize()
         }
     }
 
@@ -192,7 +193,7 @@ export class Env {
     }
 
     hideHoverStats(): void {
-        Interface.turretHoverStats = undefined
+        Interface.turretHoverObject = undefined
     }
 
     updateInterface(): void {
@@ -206,10 +207,10 @@ export class Env {
             const turret: Turret = this.turrets.find(turret => turret.cell === this.grid.focusCell)
             if (turret) {
                 turret.render(controlPannelCanvasCtx, true)
-                Interface.turretStats = turret.getStats()
+                Interface.turretObject = turret.serialize()
             }
         } else {
-            Interface.turretStats = null
+            Interface.turretObject = null
         }
     }
 
