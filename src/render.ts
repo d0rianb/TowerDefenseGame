@@ -6,7 +6,8 @@ interface StyleObject {
     lineWidth?: number,
     lineJoin?: CanvasLineJoin,
     fillStyle?: string,
-    transparency?: number
+    globalAlpha?: number
+    globalCompositeOperation?: string
 }
 
 interface RendererInterface {
@@ -18,28 +19,24 @@ const defaultStyleObject: StyleObject = {
     lineWidth: 4,
     lineJoin: 'round',
     fillStyle: 'black',
-    transparency: 1
+    globalAlpha: 1,
+    globalCompositeOperation: 'add'
 }
 
-// Move to math file ?
 function round(num: number): number {
     const precision: number = 2 * (window.devicePixelRatio || 1)
-    // return ~~(num + .5)
-    // return (num + 0.5) << 0
-    return Math.round(num * precision) / precision // TODO: bitwise operations
-    // return (2 * num + 1) / 2 | 0
+    return ~~(num * precision) / precision
 }
 
 class Renderer implements RendererInterface {
 
     static style(ctx: CanvasRenderingContext2D, obj?: StyleObject): void {
         const styleObject = { ...defaultStyleObject, ...obj }
-        // ctx = { ...ctx, ...styleObject }
-        ctx.lineWidth = styleObject.lineWidth
-        ctx.strokeStyle = styleObject.strokeStyle
-        ctx.lineJoin = styleObject.lineJoin
-        ctx.fillStyle = styleObject.fillStyle
-        ctx.globalAlpha = styleObject.transparency
+        for (let prop in styleObject) {
+            if (ctx[prop] !== styleObject[prop]) {
+                ctx[prop] = styleObject[prop]
+            }
+        }
     }
 
     static clear(ctx: CanvasRenderingContext2D): void {
@@ -89,7 +86,6 @@ class Renderer implements RendererInterface {
         ctx.translate(round(x + width / 2), round(y + height / 2))
         ctx.scale(texture.scale.x, texture.scale.y)
         ctx.rotate(texture.rotation)
-        // console.log(width * texture.offset.x - width / 2, round(width * texture.offset.x - width / 2))
         ctx.drawImage(
             texture.image,
             round(width * texture.offset.x - width / 2),
@@ -98,6 +94,14 @@ class Renderer implements RendererInterface {
             round(height)
         )
         ctx.restore()
+    }
+
+    static tint(ctx: CanvasRenderingContext2D, color: string, x: number, y: number, width: number, height: number): void {
+        this.rect(ctx, x, y, width, height, {
+            fillStyle: color,
+            globalCompositeOperation: 'multiply',
+            globalAlpha: .25
+        })
     }
 }
 

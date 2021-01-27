@@ -11,12 +11,21 @@ export const Interface = new Vue({
         return {
             turretObject: null,
             turretHoverObject: null,
-            money: 0
+            money: 0,
+            wave: 0,
+            isPaused: false,
+            pauseFunction: undefined
         }
     },
     methods: {
         blinkCostRed() { return blink('.money', 'red') },
         upgradeTurret() { this.turretObject.upgrade() },
-        deleteTurret() { this.turretObject.delete() }
+        deleteTurret() { this.turretObject.delete() },
+        pause() {
+            if (this.pauseFunction) {
+                this.isPaused = !this.isPaused
+                this.pauseFunction()
+            }
+        }
     }
 })

@@ -27,6 +27,9 @@ export class Env {
     health: number
     path: Path
     money: number
+    timestamp: number
+    paused: boolean
+    pauseDuration: number
 
     constructor(grid: Grid, canvas: HTMLCanvasElement) {
         this.grid = grid
@@ -41,11 +44,15 @@ export class Env {
         this.cellWidth = Math.min(this.canvas.width / this.grid.rows, this.canvas.height / this.grid.cols)
         this.cellHeight = this.cellWidth
         this.path = undefined
-        this.money = 150
+        this.money = 200
+        this.timestamp = performance.now()
+        this.paused = false
+        this.pauseDuration = 0
     }
 
     start(): void {
         this.enemyGenerator.start()
+        Interface.pauseFunction = () => this.togglePause()
     }
 
     loadMap(filename: string): void {
@@ -214,8 +221,17 @@ export class Env {
         }
     }
 
+    togglePause(): void {
+        this.paused = !this.paused
+        if (!this.paused) {
+            this.pauseDuration += performance.now() - this.timestamp
+        }
+    }
+
     update() {
+        if (this.paused) return window.requestAnimationFrame(() => this.update())
         stats.begin()
+        this.timestamp = performance.now()
         this.enemies.forEach(enemy => enemy.update())
         this.turrets.forEach(turret => turret.update())
         this.shots.forEach(shot => shot.update())
@@ -234,7 +250,7 @@ export class Env {
         const groundCells: Array<Cell> = this.grid.cells.filter(cell => cell.type === CellType.Ground)
         const roadCells: Array<Cell> = this.grid.cells.filter(cell => cell.type === CellType.Road)
         Renderer.style(ctx, {
-            transparency: 1,
+            globalAlpha: 1,
             fillStyle: color.ground,
             strokeStyle: color.secondary,
             lineWidth: .5
@@ -251,7 +267,7 @@ export class Env {
         const highlightCell: Cell = this.grid.cells.find(cell => cell.highlight)
         if (highlightCell) {
             Renderer.rect(ctx, highlightCell.x * this.cellWidth, highlightCell.y * this.cellHeight, this.cellWidth - .15, this.cellHeight - .15, {
-                transparency: .25,
+                globalAlpha: .25,
                 strokeStyle: color.highlightTransparent,
                 fillStyle: color.highlightTransparent,
                 lineWidth: 0
@@ -260,7 +276,7 @@ export class Env {
         const focusCell: Cell = this.grid.focusCell
         if (focusCell) {
             Renderer.rect(ctx, focusCell.x * this.cellWidth, focusCell.y * this.cellWidth, this.cellWidth, this.cellWidth, {
-                transparency: 1,
+                globalAlpha: 1,
                 strokeStyle: color.highlight,
                 fillStyle: 'transparent',
                 lineWidth: 2.5

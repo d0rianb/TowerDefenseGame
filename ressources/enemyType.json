@@ -1,0 +1,40 @@
+{
+    "enemies": [
+        {
+            "id": 0,
+            "name": "BaseEnemy",
+            "radius": 10,
+            "health": 90,
+            "speed": 100,
+            "money": 25
+        }, {
+            "id": 1,
+            "name": "SpeedEnemy",
+            "radius": 6,
+            "health": 50,
+            "speed": 150,
+            "money": 20
+        }, {
+            "id": 2,
+            "name": "SolidEnemy",
+            "radius": 12,
+            "health": 150,
+            "speed": 90,
+            "money": 45
+        }, {
+            "id": 3,
+            "name": "TankEnemy",
+            "radius": 17.5,
+            "health": 1000,
+            "speed": 80,
+            "money": 125
+        }, {
+            "id": 4,
+            "name": "ThomasDestructor3000",
+            "radius": 10,
+            "health": 120,
+            "speed": 110,
+            "money": 40
+        }
+    ]
+}

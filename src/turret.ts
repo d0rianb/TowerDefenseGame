@@ -54,7 +54,7 @@ class Turret {
         this.target = undefined
         this.canShoot = true
         this.dir = -Math.PI / 2
-        this.fireRate = 5 // each s
+        this.fireRate = 6 // each s
         this.upgradeCost = 25
         this.cost = 125
         this.kills = 0
@@ -80,7 +80,7 @@ class Turret {
         this.level++
         this.upgradeCost += 25
         this.fireRate += .5
-        this.damage += 1.5
+        this.damage += 3
         this.radius += 5
         this.health += 25
         return true
@@ -142,7 +142,7 @@ class Turret {
         } else {
             Renderer.rectSprite(ctx, this.origin.x, this.origin.y, this.env.cellWidth, this.env.cellWidth, TURRET_BASE_TEXTURE)
             Renderer.rectSprite(ctx, this.origin.x, this.origin.y, this.env.cellWidth, this.env.cellWidth, TURRET_HEAD_TEXTURE)
-            Renderer.circle(ctx, this.pos.x, this.pos.y, this.radius, { lineWidth: 1, transparency: .25, strokeStyle: 'white' })
+            Renderer.circle(ctx, this.pos.x, this.pos.y, this.radius, { lineWidth: 1, globalAlpha: .25, strokeStyle: 'white' })
         }
     }
 }

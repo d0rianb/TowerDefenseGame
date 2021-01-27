@@ -27,7 +27,11 @@
       <li>FireRate : {{ turretHoverObject?.fireRate }}</li>
     </div>
 
-    <div class="money">{{ money }}$</div>
+    <div class="top-right">
+      <span class="money">{{ money }}$</span>
+      <span class="wave">Vague n°{{ wave }}</span>
+      <button type="button" name="pause" @click="pause">{{ isPaused ? '>' : '||' }}</button>
+    </div>
     <div class="control-pannel" v-show="turretObject">
       <h2>Control Pannel</h2>
       <div class="turret-view">
@@ -44,10 +48,10 @@
       <div class="turret-stats stats">
         <li>Level : {{ turretObject?.level }}</li>
         <li>Health : {{ turretObject?.health }}</li>
-        <li>Radius : {{ turretObject?.radius }}px</li>
+        <li>Radius : {{ turretObject?.radius }} px</li>
         <li>Damage : {{ turretObject?.damage }}</li>
-        <li>FireRate : {{ turretObject?.fireRate }}</li>
-        <li>Cost : {{ turretObject?.cost }}$</li>
+        <li>FireRate : {{ turretObject?.fireRate }} /seconds</li>
+        <li>Cost : {{ turretObject?.cost }} $</li>
         <li>Kills : {{ turretObject?.kills }}</li>
         <li>Damage : {{ turretObject?.damageDone }}</li>
       </div>

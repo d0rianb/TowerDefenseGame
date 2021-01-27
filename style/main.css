@@ -121,7 +121,9 @@ h2 {
   z-index: 10;
 }
 
-.money {
+.top-right {
+  display: flex;
+  flex-flow: column nowrap;
   position: absolute;
   top: 0;
   right: 0;
@@ -129,6 +131,7 @@ h2 {
   color: #fff;
   font-weight: 300;
   font-size: 1.1rem;
+  text-align: right;
   transition: color 250ms ease;
 }
 

@@ -1,6 +1,18 @@
 import { Path, Point } from './path'
 import { Renderer } from './render'
+import { Interface } from './interface'
 import { Env } from './env'
+
+import { default as enemiesType } from '../ressources/enemyType.json'
+
+interface EnemyType {
+    id: number
+    name: string
+    radius: number
+    health: number
+    speed: number
+    money: number
+}
 
 interface MovementObject {
     speed: number
@@ -21,20 +33,20 @@ class Enemy {
     money: number
     alive: boolean
 
-    constructor(env: Env, health: number) {
+    constructor(env: Env, enemyObj: EnemyType) {
         this.env = env
         this.path = this.env.path
         this.nodeIndex = 0
         this.pos = new Point(this.path.entry.x, this.path.entry.y)
-        this.radius = 10
+        this.radius = enemyObj.radius
         this.movement = {
-            speed: 100, // m/s
+            speed: enemyObj.speed, // m/s
             duration: null,
-            startTime: Date.now()
+            startTime: performance.now()
         }
-        this.health = health
+        this.health = enemyObj.health
+        this.money = enemyObj.money
         this.alive = true
-        this.money = 25
         this.percent = 0
         this.angle = 0
     }
@@ -47,7 +59,7 @@ class Enemy {
         }
         this.pos.x = nextPos.x
         this.pos.y = nextPos.y
-        this.percent += (Date.now() - this.movement.startTime) / this.movement.duration / 10
+        this.percent += (this.env.timestamp - this.movement.startTime - this.env.pauseDuration) / this.movement.duration / 10
 
         // Angle calculation
         const posBefore = this.path.pointAt(this.percent - 1)
@@ -56,7 +68,7 @@ class Enemy {
     }
 
     nextPos(iteration: number = 1) {
-        let nextPercent: number = (Date.now() + (iteration - 1) * 60 - this.movement.startTime) / this.movement.duration / 10
+        let nextPercent: number = (this.env.timestamp + (iteration - 1) * 60 - this.movement.startTime - this.env.pauseDuration) / this.movement.duration / 10
         return this.path.pointAt(nextPercent)
     }
 
@@ -93,13 +105,15 @@ class EnemyGenerator {
     amount: number
     interval: number
     count: number
+    wave: number
 
-    constructor(env: Env, spawnRate: number = 1000, amount: number = 1) {
+    constructor(env: Env, spawnRate: number = 2000, amount: number = 1) {
         this.env = env
         this.spawnRate = spawnRate
         this.amount = amount
         this.interval = undefined
         this.count = 0
+        this.wave = 0
     }
 
     start(): void {
@@ -116,11 +130,16 @@ class EnemyGenerator {
 
     spawn(): void {
         if (!this.env.path) return
-        this.env.enemies.push(new Enemy(this.env, 50 + 5 * this.count))
+        const enemyType: EnemyType = enemiesType.enemies[this.wave % (enemiesType.enemies.length - 1)]
+        enemyType.health += this.count * 2
+        this.env.enemies.push(new Enemy(this.env, enemyType))
         this.count++
-        if (this.count % 10 == 0) {
-            this.spawnRate = Math.max(this.spawnRate - 25, 100)
-            this.start()
+        if (this.count % 10 === 0) {
+            this.wave++
+            this.spawnRate = Math.max(this.spawnRate - 250, 100)
+            this.stop()
+            Interface.wave = this.wave
+            window.setInterval(() => this.start(), 3000)
         }
     }
 
