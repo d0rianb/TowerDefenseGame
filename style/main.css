@@ -135,6 +135,21 @@ h2 {
   transition: color 250ms ease;
 }
 
+.top-right button {
+  padding: 0.25em;
+  margin: 0.25em 0;
+  border: 1px solid #fff;
+  color: #fff;
+  background-color: transparent;
+  border-radius: 3px;
+  user-select: none;
+  transition: all 250ms ease;
+}
+
+.top-right button:hover {
+  background-color: rgba(200, 200, 200, 0.5);
+}
+
 .red {
   color: #e60e3d;
 }
@@ -148,7 +163,7 @@ h2 {
   transition: all 250ms ease;
 }
 
-.actions > button:focus {
+button:focus {
   outline: none;
 }
 

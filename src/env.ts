@@ -51,7 +51,7 @@ export class Env {
     }
 
     start(): void {
-        this.enemyGenerator.start()
+        // this.enemyGenerator.start()
         Interface.pauseFunction = () => this.togglePause()
     }
 
@@ -131,6 +131,7 @@ export class Env {
     }
 
     handleMouseMove(e: MouseEvent): void {
+        if (e.target !== this.canvas) return
         this.grid.cells.forEach(cell => cell.highlight = false)
         const cell: Cell = this.detectCell(e)
         if (cell) {

@@ -23,8 +23,10 @@ const defaultStyleObject: StyleObject = {
     globalCompositeOperation: 'add'
 }
 
+// Move to math file ?
+const precision: number = 2 * (window.devicePixelRatio || 1)
+
 function round(num: number): number {
-    const precision: number = 2 * (window.devicePixelRatio || 1)
     return ~~(num * precision) / precision
 }
 
@@ -93,6 +95,15 @@ class Renderer implements RendererInterface {
             round(width),
             round(height)
         )
+        ctx.restore()
+    }
+
+    static circleSprite(ctx: CanvasRenderingContext2D, x: number, y: number, radius: number, texture: Texture): void {
+        ctx.save()
+        ctx.beginPath()
+        ctx.arc(round(x), round(y), radius, 0, 2*Math.PI)
+        ctx.clip()
+        this.rectSprite(ctx, x-radius, y-radius, 2*radius, 2*radius, texture)
         ctx.restore()
     }
 

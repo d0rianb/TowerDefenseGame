@@ -3,6 +3,7 @@ import { Renderer } from './render'
 import { Interface } from './interface'
 import { Env } from './env'
 
+import { ENEMY_TEXTURE } from './texture'
 import { default as enemiesType } from '../ressources/enemyType.json'
 
 interface EnemyType {
@@ -26,7 +27,7 @@ class Enemy {
     pos: Point
     nodeIndex: number
     radius: number
-    movement: MovementObject
+    speed: number
     percent: number
     angle: number
     health: number
@@ -39,11 +40,7 @@ class Enemy {
         this.nodeIndex = 0
         this.pos = new Point(this.path.entry.x, this.path.entry.y)
         this.radius = enemyObj.radius
-        this.movement = {
-            speed: enemyObj.speed, // m/s
-            duration: null,
-            startTime: performance.now()
-        }
+        this.speed = enemyObj.speed // m/s
         this.health = enemyObj.health
         this.money = enemyObj.money
         this.alive = true
@@ -52,23 +49,22 @@ class Enemy {
     }
 
     move(): void {
-        if (!this.movement.duration) { this.movement.duration = this.path.length / this.movement.speed }
         const nextPos = this.nextPos()
-        if (this.pos.x === nextPos.x && this.pos.y === nextPos.y) {
+        if (this.percent  > 99.9) {
             return this.env.hasReachEnd(this)
         }
         this.pos.x = nextPos.x
         this.pos.y = nextPos.y
-        this.percent += (this.env.timestamp - this.movement.startTime - this.env.pauseDuration) / this.movement.duration / 10
+        this.percent += this.speed/this.path.length
 
         // Angle calculation
         const posBefore = this.path.pointAt(this.percent - 1)
         const posAfter = this.path.pointAt(this.percent + 1)
-        this.angle = Math.atan2(posAfter.y - posBefore.y, posAfter.x - posBefore.x) * 180 / Math.PI
+        this.angle = -Math.PI/2 + Math.atan2(posAfter.y - posBefore.y, posAfter.x - posBefore.x)
     }
 
     nextPos(iteration: number = 1) {
-        let nextPercent: number = (this.env.timestamp + (iteration - 1) * 60 - this.movement.startTime - this.env.pauseDuration) / this.movement.duration / 10
+        const nextPercent: number = this.percent + (this.speed/this.path.length) * (iteration - 1)
         return this.path.pointAt(nextPercent)
     }
 
@@ -95,7 +91,9 @@ class Enemy {
     }
 
     render(ctx: CanvasRenderingContext2D): void {
-        Renderer.circle(ctx, this.pos.x, this.pos.y, this.radius, { strokeStyle: 'red', lineWidth: 2 })
+        ENEMY_TEXTURE.rotation = this.angle + Math.PI / 2
+        Renderer.circleSprite(ctx, this.pos.x, this.pos.y, this.radius, ENEMY_TEXTURE)
+        // Renderer.circle(ctx, this.pos.x, this.pos.y, this.radius, { strokeStyle: 'red', lineWidth: 2 })
     }
 }
 
@@ -118,6 +116,7 @@ class EnemyGenerator {
 
     start(): void {
         this.stop()
+        this.spawn()
         this.interval = window.setInterval(() => this.spawn(), this.spawnRate)
     }
 
@@ -129,17 +128,17 @@ class EnemyGenerator {
     }
 
     spawn(): void {
-        if (!this.env.path) return
+        if (!this.env.path || this.env.paused) return
         const enemyType: EnemyType = enemiesType.enemies[this.wave % (enemiesType.enemies.length - 1)]
         enemyType.health += this.count * 2
         this.env.enemies.push(new Enemy(this.env, enemyType))
         this.count++
         if (this.count % 10 === 0) {
             this.wave++
+            Interface.wave = this.wave
             this.spawnRate = Math.max(this.spawnRate - 250, 100)
             this.stop()
-            Interface.wave = this.wave
-            window.setInterval(() => this.start(), 3000)
+            window.setTimeout(() => this.start(), 3000)
         }
     }
 

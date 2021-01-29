@@ -3,8 +3,6 @@ TODO :
  - fix turret shadow issue
  - add version check to map
  - map decorations
- - turret ameliorations
  - README.md
- - render optimization with last styleObject comparaison
  - setup Vite
- - pause game
+ - pause game | ~
