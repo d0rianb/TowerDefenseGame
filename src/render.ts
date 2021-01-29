@@ -18,7 +18,7 @@ const defaultStyleObject: StyleObject = {
     strokeStyle: 'black',
     lineWidth: 4,
     lineJoin: 'round',
-    fillStyle: 'black',
+    fillStyle: 'transparent',
     globalAlpha: 1,
     globalCompositeOperation: 'add'
 }
@@ -41,8 +41,13 @@ class Renderer implements RendererInterface {
         }
     }
 
-    static clear(ctx: CanvasRenderingContext2D): void {
-        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
+    static clear(ctx: CanvasRenderingContext2D, color?: string): void {
+        if (color) {
+            this.style(ctx, { fillStyle: color })
+            ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height)
+        } else {
+            ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
+        }
     }
 
     static line(ctx: CanvasRenderingContext2D, point1: Point, point2: Point, obj?: StyleObject): void {
@@ -101,9 +106,9 @@ class Renderer implements RendererInterface {
     static circleSprite(ctx: CanvasRenderingContext2D, x: number, y: number, radius: number, texture: Texture): void {
         ctx.save()
         ctx.beginPath()
-        ctx.arc(round(x), round(y), radius, 0, 2*Math.PI)
+        ctx.arc(round(x), round(y), radius, 0, 2 * Math.PI)
         ctx.clip()
-        this.rectSprite(ctx, x-radius, y-radius, 2*radius, 2*radius, texture)
+        this.rectSprite(ctx, x - radius, y - radius, 2 * radius, 2 * radius, texture)
         ctx.restore()
     }
 

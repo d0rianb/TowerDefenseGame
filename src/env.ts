@@ -29,7 +29,6 @@ export class Env {
     money: number
     timestamp: number
     paused: boolean
-    pauseDuration: number
 
     constructor(grid: Grid, canvas: HTMLCanvasElement) {
         this.grid = grid
@@ -47,7 +46,6 @@ export class Env {
         this.money = 200
         this.timestamp = performance.now()
         this.paused = false
-        this.pauseDuration = 0
     }
 
     start(): void {
@@ -224,9 +222,6 @@ export class Env {
 
     togglePause(): void {
         this.paused = !this.paused
-        if (!this.paused) {
-            this.pauseDuration += performance.now() - this.timestamp
-        }
     }
 
     update() {
@@ -246,21 +241,18 @@ export class Env {
 
     render() {
         const ctx: CanvasRenderingContext2D = this.canvas.getContext('2d')
-        Renderer.clear(ctx)
-        let fillColor: string = color.bg
-        const groundCells: Array<Cell> = this.grid.cells.filter(cell => cell.type === CellType.Ground)
         const roadCells: Array<Cell> = this.grid.cells.filter(cell => cell.type === CellType.Road)
-        Renderer.style(ctx, {
-            globalAlpha: 1,
-            fillStyle: color.ground,
-            strokeStyle: color.secondary,
-            lineWidth: .5
-        })
-        groundCells.forEach((cell, i) => Renderer.rect(ctx, cell.x * this.cellWidth, cell.y * this.cellHeight, this.cellWidth * cell.width - .15, this.cellHeight * cell.height - .15, {}, true))
+
+        Renderer.clear(ctx, color.ground)
         Renderer.style(ctx, { fillStyle: color.road, strokeStyle: color.secondary, lineWidth: .5 })
         roadCells.forEach((cell, i) => Renderer.rect(ctx, cell.x * this.cellWidth, cell.y * this.cellHeight, this.cellWidth * cell.width - .15, this.cellHeight * cell.height - .15, {}, true))
 
-        if (this.path) { this.path.render(ctx) }
+        for (let i = 0; i < Math.max(this.grid.rows, this.grid.cols); i++) {
+            Renderer.line(ctx, new Point(i * this.cellWidth, 0), new Point(i * this.cellWidth, this.canvas.height), { lineWidth: .5, strokeStyle: color.secondary, })
+            Renderer.line(ctx, new Point(0, i * this.cellWidth), new Point(this.canvas.width, i * this.cellWidth), { lineWidth: .5, strokeStyle: color.secondary, })
+        }
+
+        // if (this.path) { this.path.render(ctx) }
         this.enemies.forEach(enemy => enemy.render(ctx))
         this.shots.forEach(shot => shot.render(ctx))
         this.turrets.forEach(turret => turret.render(ctx))
