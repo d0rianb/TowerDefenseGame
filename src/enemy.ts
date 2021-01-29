@@ -15,12 +15,6 @@ interface EnemyType {
     money: number
 }
 
-interface MovementObject {
-    speed: number
-    duration: number
-    startTime: number
-}
-
 class Enemy {
     env: Env
     path: Path
@@ -40,7 +34,7 @@ class Enemy {
         this.nodeIndex = 0
         this.pos = new Point(this.path.entry.x, this.path.entry.y)
         this.radius = enemyObj.radius
-        this.speed = enemyObj.speed // m/s
+        this.speed = enemyObj.speed * 1.5
         this.health = enemyObj.health
         this.money = enemyObj.money
         this.alive = true
@@ -50,21 +44,21 @@ class Enemy {
 
     move(): void {
         const nextPos = this.nextPos()
-        if (this.percent  > 99.9) {
+        if (this.percent > 99.9) {
             return this.env.hasReachEnd(this)
         }
         this.pos.x = nextPos.x
         this.pos.y = nextPos.y
-        this.percent += this.speed/this.path.length
+        this.percent += this.speed / this.path.length
 
         // Angle calculation
         const posBefore = this.path.pointAt(this.percent - 1)
         const posAfter = this.path.pointAt(this.percent + 1)
-        this.angle = -Math.PI/2 + Math.atan2(posAfter.y - posBefore.y, posAfter.x - posBefore.x)
+        this.angle = -Math.PI / 2 + Math.atan2(posAfter.y - posBefore.y, posAfter.x - posBefore.x)
     }
 
     nextPos(iteration: number = 1) {
-        const nextPercent: number = this.percent + (this.speed/this.path.length) * (iteration - 1)
+        const nextPercent: number = this.percent + (this.speed / this.path.length) * (iteration - 1)
         return this.path.pointAt(nextPercent)
     }
 

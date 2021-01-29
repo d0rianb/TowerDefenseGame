@@ -18,7 +18,6 @@ const loadingScreen: HTMLElement = document.querySelector('.loading-screen')
 const progressBar: HTMLProgressElement = document.querySelector('.loading-screen progress')
 
 const canvas: HTMLCanvasElement = createCanvas(window.innerWidth, window.innerHeight)
-const ctx: CanvasRenderingContext2D = canvas.getContext('2d')
 progressBar.value += 10
 
 document.querySelector('main').appendChild(canvas)

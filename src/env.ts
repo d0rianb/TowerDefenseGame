@@ -51,7 +51,7 @@ export class Env {
     }
 
     start(): void {
-        // this.enemyGenerator.start()
+        this.enemyGenerator.start()
         Interface.pauseFunction = () => this.togglePause()
     }
 
