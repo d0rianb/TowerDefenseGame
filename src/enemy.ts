@@ -124,13 +124,13 @@ class EnemyGenerator {
     spawn(): void {
         if (!this.env.path || this.env.paused) return
         const enemyType: EnemyType = enemiesType.enemies[this.wave % (enemiesType.enemies.length - 1)]
-        enemyType.health += this.count * 2
+        enemyType.health += this.count
         this.env.enemies.push(new Enemy(this.env, enemyType))
         this.count++
         if (this.count % 10 === 0) {
             this.wave++
             Interface.wave = this.wave
-            this.spawnRate = Math.max(this.spawnRate - 250, 100)
+            this.spawnRate = Math.max(this.spawnRate - 150, 200)
             this.stop()
             window.setTimeout(() => this.start(), 3000)
         }
