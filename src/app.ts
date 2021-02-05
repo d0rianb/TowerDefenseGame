@@ -39,6 +39,7 @@ env.start()
 progressBar.value += 10
 loadingScreen.style.display = 'none'
 
+window.env = env
 
 window.addEventListener('keydown', e => env.handleKeyDown(e))
 window.addEventListener('mousemove', e => env.handleMouseMove(e))
