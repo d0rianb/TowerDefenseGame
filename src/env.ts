@@ -43,7 +43,7 @@ export class Env {
         this.cellWidth = Math.min(this.canvas.width / this.grid.rows, this.canvas.height / this.grid.cols)
         this.cellHeight = this.cellWidth
         this.path = undefined
-        this.money = 2000000
+        this.money = 200
         this.timestamp = performance.now()
         this.paused = false
     }
@@ -252,7 +252,7 @@ export class Env {
             Renderer.line(ctx, new Point(0, i * this.cellWidth), new Point(this.canvas.width, i * this.cellWidth), { lineWidth: .5, strokeStyle: color.secondary, })
         }
 
-        if (this.path) { this.path.render(ctx) }
+        // if (this.path) { this.path.render(ctx) }
         this.enemies.forEach(enemy => enemy.render(ctx))
         this.shots.forEach(shot => shot.render(ctx))
         this.turrets.forEach(turret => turret.render(ctx))
