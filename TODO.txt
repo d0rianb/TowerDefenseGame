@@ -6,3 +6,6 @@ TODO :
  - README.md
  - setup Vite
  - pause game | ~
+
+ ISSUE :
+ - Enemy movement when generate after pause

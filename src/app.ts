@@ -37,9 +37,9 @@ env.loadMap('test3.map')
 progressBar.value += 10
 env.start()
 progressBar.value += 10
-loadingScreen.style.display = 'none'
+loadingScreen.style.display = 'none';
 
-window.env = env
+(window as any).env = env // Hack
 
 window.addEventListener('keydown', e => env.handleKeyDown(e))
 window.addEventListener('mousemove', e => env.handleMouseMove(e))
