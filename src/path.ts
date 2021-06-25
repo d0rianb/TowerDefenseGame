@@ -1,5 +1,5 @@
 import PathBuilder from 'svg-path-builder';
-import { Renderer } from './render'
+import { OffscreenRenderer as Renderer, Vector2, Point, V_UNIT } from 'unrail-engine'
 
 interface JSONPath {
     points: Array<Array<number>>
@@ -58,36 +58,9 @@ class Path {
         }
     }
 
-    render(ctx: CanvasRenderingContext2D): void {
-        Renderer.poly(ctx, this.points, { lineWidth: 1, fillStyle: 'grey', globalAlpha: .25 })
+    render(): void {
+        Renderer.poly(this.points, { lineWidth: 1, fillStyle: 'grey', globalAlpha: .25 })
     }
 }
 
-class Point {
-    x: number
-    y: number
-
-    constructor(x: number, y: number) {
-        this.x = x
-        this.y = y
-    }
-
-    dist(point: Point): number {
-        return Math.sqrt((this.x - point.x) ** 2 + (this.y - point.y) ** 2)
-    }
-}
-
-class Vector2 {
-    x: number
-    y: number
-
-    constructor(x: number, y: number) {
-        this.x = x
-        this.y = y
-    }
-}
-
-export const V_NULL = new Vector2(0, 0)
-export const V_UNIT = new Vector2(1, 1)
-
-export { Path, Point, Vector2 }
+export { Path }

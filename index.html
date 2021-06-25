@@ -2,63 +2,57 @@
 <html lang="fr" dir="ltr">
 
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <title>Tower Defense</title>
-  <link rel="stylesheet" href="style/main.css">
-  <script src="dist/app.bundle.js" defer></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Tower Defense</title>
+    <link rel="stylesheet" href="style/main.css">
+    <script src="dist/app.bundle.js" defer></script>
 </head>
 
 <body>
-  <main id="app">
-    <div class="fps"></div>
+    <main id="app">
+        <div class="fps"></div>
+        <div class="floating-stats stats" v-show="turretHoverObject">
+            <li>Level : {{ turretHoverObject?.level }}</li>
+            <li>Health : {{ turretHoverObject?.health }}</li>
+            <li>Radius : {{ turretHoverObject?.radius }}px</li>
+            <li>Damage : {{ turretHoverObject?.damage }}</li>
+            <li>FireRate : {{ turretHoverObject?.fireRate }}</li>
+        </div>
 
-    <div class="loading-screen">
-      <h2>Tower Defense Game which currently doesn't have a proper name</h2>
-      <img src="./ressources/img/tdg-logo-2.png" alt="logo">
-      <progress value="0" max="100">0%</progress>
-    </div>
-    <div class="floating-stats stats" v-show="turretHoverObject">
-      <li>Level : {{ turretHoverObject?.level }}</li>
-      <li>Health : {{ turretHoverObject?.health }}</li>
-      <li>Radius : {{ turretHoverObject?.radius }}px</li>
-      <li>Damage : {{ turretHoverObject?.damage }}</li>
-      <li>FireRate : {{ turretHoverObject?.fireRate }}</li>
-    </div>
-
-    <div class="top-right">
-      <span class="money">{{ money }}$</span>
-      <span class="wave">Vague n°{{ wave }}</span>
-      <button type="button" name="pause" @click="pause">{{ isPaused ? '>' : '||' }}</button>
-    </div>
-    <div class="control-pannel" v-show="turretObject">
-      <h2>Control Pannel</h2>
-      <div class="turret-view">
-        <canvas id="turret-viewer" width="120" height="120"></canvas>
-      </div>
-      <div class="actions">
-        <button type="button" name="upgrade" class="upgrade-button" @click="upgradeTurret">
-          Upgrade: {{ turretObject?.upgradeCost }}$
-        </button>
-        <button type="button" name="delete" class="delete-button" @click="deleteTurret">
-          Delete: {{ ~~(turretObject?.cost / 2) }}$
-        </button>
-      </div>
-      <div class="turret-stats stats">
-        <li>Level : {{ turretObject?.level }}</li>
-        <li>Health : {{ turretObject?.health }}</li>
-        <li>Radius : {{ turretObject?.radius }} px</li>
-        <li>Damage : {{ turretObject?.damage }}</li>
-        <li>FireRate : {{ turretObject?.fireRate }} /seconds</li>
-        <li>Cost : {{ turretObject?.cost }} $</li>
-        <li>Kills : {{ turretObject?.kills }}</li>
-        <li>Damage : {{ turretObject?.damageDone }}</li>
-      </div>
-      <div class="turret-actions">
-      </div>
-    </div>
-  </main>
+        <div class="top-right">
+            <span class="money">{{ money }}$</span>
+            <span class="wave">Vague n°{{ wave }}</span>
+            <button type="button" name="pause" @click="pause">{{ isPaused ? '>' : '||' }}</button>
+        </div>
+        <div class="control-pannel" v-show="turretObject">
+            <h2>Control Pannel</h2>
+            <div class="turret-view">
+                <canvas id="turret-viewer" width="120" height="120"></canvas>
+            </div>
+            <div class="actions">
+                <button type="button" name="upgrade" class="upgrade-button" @click="upgradeTurret">
+                    Upgrade: {{ turretObject?.upgradeCost }}$
+                </button>
+                <button type="button" name="delete" class="delete-button" @click="deleteTurret">
+                    Delete: {{ ~~(turretObject?.cost / 2) }}$
+                </button>
+            </div>
+            <div class="turret-stats stats">
+                <li>Level : {{ turretObject?.level }}</li>
+                <li>Health : {{ turretObject?.health }}</li>
+                <li>Radius : {{ turretObject?.radius }} px</li>
+                <li>Damage : {{ turretObject?.damage }}</li>
+                <li>FireRate : {{ turretObject?.fireRate }} /seconds</li>
+                <li>Cost : {{ turretObject?.cost }} $</li>
+                <li>Kills : {{ turretObject?.kills }}</li>
+                <li>Damage : {{ turretObject?.damageDone }}</li>
+            </div>
+            <div class="turret-actions">
+            </div>
+        </div>
+    </main>
 </body>
 
 </html>

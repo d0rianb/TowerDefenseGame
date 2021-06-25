@@ -1,7 +1,7 @@
 {
-    "name": "template",
-    "version": "0.0.1",
-    "description": "",
+    "name": "tower-defense-game",
+    "version": "0.1.0",
+    "description": "A simple tower defense game made with the unrail engine",
     "scripts": {
         "dev": "webpack --watch ",
         "old-dev": "-dev-server --port 8080 --hot",
@@ -13,6 +13,7 @@
         "svg-path-builder": "^1.0.2",
         "ts-loader": "^6.2.2",
         "typescript": "^3.8.3",
+        "unrail-engine": "^0.4.8",
         "vue": "^2.6.12"
     },
     "devDependencies": {
@@ -21,7 +22,12 @@
         "webpack-cli": "^3.3.11",
         "webpack-dev-server": "^3.11.2"
     },
-    "keywords": [],
-    "author": "",
+    "keywords": [
+        "game",
+        "tower",
+        "2d",
+        "unrail-engine"
+    ],
+    "author": "d0rianb<dorian.beauchesne@icloud.com>",
     "license": "MIT"
 }

@@ -1,5 +1,6 @@
-import { Path, Point } from './path'
-import { Renderer } from './render'
+import { OffscreenRenderer as Renderer, Point } from 'unrail-engine'
+
+import { Path } from './path'
 import { Interface } from './interface'
 import { Env } from './env'
 
@@ -84,10 +85,9 @@ class Enemy {
         this.checkHit()
     }
 
-    render(ctx: CanvasRenderingContext2D): void {
+    render(): void {
         ENEMY_TEXTURE.rotation = this.angle + Math.PI / 2
-        Renderer.circleSprite(ctx, this.pos.x, this.pos.y, this.radius, ENEMY_TEXTURE)
-        // Renderer.circle(ctx, this.pos.x, this.pos.y, this.radius, { strokeStyle: 'red', lineWidth: 2 })
+        Renderer.circleSprite(this.pos.x, this.pos.y, this.radius, ENEMY_TEXTURE)
     }
 }
 
@@ -121,12 +121,16 @@ class EnemyGenerator {
         }
     }
 
-    spawn(): void {
-        if (!this.env.path || this.env.paused) return
+    spawnOnce(): void {
         const enemyType: EnemyType = enemiesType.enemies[this.wave % (enemiesType.enemies.length - 1)]
         enemyType.health += this.count
         this.env.enemies.push(new Enemy(this.env, enemyType))
         this.count++
+    }
+
+    spawn(): void {
+        if (!this.env.path || this.env.paused) return
+        this.spawnOnce()
         if (this.count % 10 === 0) {
             this.wave++
             Interface.wave = this.wave

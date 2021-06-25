@@ -1,19 +1,15 @@
 import { saveAs } from 'file-saver';
-import Stats from 'stats.js'
+import { OffscreenRenderer, Renderer, Point, Vector2, GameEnvironement, getWindowDimensions, getCanvasDimensions } from 'unrail-engine'
 
 import { Grid, Cell, CellType } from './grid'
-import { Path, Point, Vector2 } from './path'
-import { Renderer } from './render'
+import { Path } from './path'
 import { Turret, Shot } from './turret'
 import { Enemy, EnemyGenerator } from './enemy'
 import { Interface } from './interface'
+
 import * as color from '../ressources/color.json'
 
-const stats = new Stats()
-stats.showPanel(0)
-document.querySelector('.fps').appendChild(stats.dom)
-
-export class Env {
+export class Env extends GameEnvironement {
     grid: Grid
     canvas: HTMLCanvasElement
     width: number
@@ -31,16 +27,17 @@ export class Env {
     paused: boolean
 
     constructor(grid: Grid, canvas: HTMLCanvasElement) {
+        super(getWindowDimensions().width, getWindowDimensions().height)
         this.grid = grid
         this.canvas = canvas
-        this.width = this.canvas.width / window.devicePixelRatio
-        this.height = this.canvas.height / window.devicePixelRatio
+        this.width = getCanvasDimensions(this.canvas).width
+        this.height = getCanvasDimensions(this.canvas).height
         this.turrets = []
         this.enemies = []
         this.enemyGenerator = new EnemyGenerator(this)
         this.shots = []
         this.health = 1000 // hp
-        this.cellWidth = Math.min(this.canvas.width / this.grid.rows, this.canvas.height / this.grid.cols)
+        this.cellWidth = Math.max(this.width / this.grid.rows, this.height / this.grid.cols)
         this.cellHeight = this.cellWidth
         this.path = undefined
         this.money = 200
@@ -57,10 +54,10 @@ export class Env {
         fetch(`ressources/map/${filename.replace(/\.map/, '')}.map`)
             .then(data => data.json())
             .then(map => {
-                const scaleFactor: Vector2 = {
-                    x: this.canvas.width / map.screen.width,
-                    y: this.canvas.height / map.screen.width,
-                }
+                const scaleFactor: Vector2 = new Vector2(
+                    this.width / map.screen.width,
+                    this.height / map.screen.width,
+                )
                 const path: Path = Path.fromJSON(map.path, scaleFactor)
                 this.setPath(path)
                 this.path.toSVGPath()
@@ -86,7 +83,7 @@ export class Env {
     }
 
     spawnEnemy(): void {
-        this.enemyGenerator.spawn()
+        this.enemyGenerator.spawnOnce()
     }
 
     hasReachEnd(enemy: Enemy): void {
@@ -209,10 +206,12 @@ export class Env {
 
         if (this.grid.focusCell && controlPannelCanvas) {
             const controlPannelCanvasCtx: CanvasRenderingContext2D = controlPannelCanvas.getContext('2d')
-            controlPannelCanvasCtx.clearRect(0, 0, 120, 120)
             const turret: Turret = this.turrets.find(turret => turret.cell === this.grid.focusCell)
             if (turret) {
-                turret.render(controlPannelCanvasCtx, true)
+                Renderer.setContext(controlPannelCanvasCtx)
+                Renderer.beginFrame()
+                turret.render(true)
+                Renderer.endFrame()
                 Interface.turretObject = turret.serialize()
             }
         } else {
@@ -225,8 +224,7 @@ export class Env {
     }
 
     update() {
-        if (this.paused) return window.requestAnimationFrame(() => this.update())
-        stats.begin()
+        if (this.paused) return
         this.timestamp = performance.now()
         this.enemies.forEach(enemy => enemy.update())
         this.turrets.forEach(turret => turret.update())
@@ -235,31 +233,27 @@ export class Env {
         this.manageShots()
         this.updateInterface()
         this.render()
-        stats.end()
-        window.requestAnimationFrame(() => this.update())
     }
 
     render() {
-        const ctx: CanvasRenderingContext2D = this.canvas.getContext('2d')
+        OffscreenRenderer.beginFrame()
         const roadCells: Array<Cell> = this.grid.cells.filter(cell => cell.type === CellType.Road)
-
-        Renderer.clear(ctx, color.ground)
-        Renderer.style(ctx, { fillStyle: color.road, strokeStyle: color.secondary, lineWidth: .5 })
-        roadCells.forEach((cell, i) => Renderer.rect(ctx, cell.x * this.cellWidth, cell.y * this.cellHeight, this.cellWidth * cell.width - .15, this.cellHeight * cell.height - .15, {}, true))
+        OffscreenRenderer.clear(color.ground)
+        roadCells.forEach(cell => OffscreenRenderer.rect(cell.x * this.cellWidth, cell.y * this.cellHeight, this.cellWidth * cell.width, this.cellHeight * cell.height, { fillStyle: color.road, strokeStyle: color.road, lineWidth: .5 }))
 
         for (let i = 0; i < Math.max(this.grid.rows, this.grid.cols); i++) {
-            Renderer.line(ctx, new Point(i * this.cellWidth, 0), new Point(i * this.cellWidth, this.canvas.height), { lineWidth: .5, strokeStyle: color.secondary, })
-            Renderer.line(ctx, new Point(0, i * this.cellWidth), new Point(this.canvas.width, i * this.cellWidth), { lineWidth: .5, strokeStyle: color.secondary, })
+            OffscreenRenderer.line(i * this.cellWidth, 0, i * this.cellWidth, this.canvas.height, { lineWidth: .5, strokeStyle: color.secondary, })
+            OffscreenRenderer.line(0, i * this.cellWidth, this.canvas.width, i * this.cellWidth, { lineWidth: .5, strokeStyle: color.secondary, })
         }
 
-        // if (this.path) { this.path.render(ctx) }
-        this.enemies.forEach(enemy => enemy.render(ctx))
-        this.shots.forEach(shot => shot.render(ctx))
-        this.turrets.forEach(turret => turret.render(ctx))
+        // if (this.path) { this.path.render() }
+        this.turrets.forEach(turret => turret.render())
+        this.enemies.forEach(enemy => enemy.render())
+        this.shots.forEach(shot => shot.render())
 
         const highlightCell: Cell = this.grid.cells.find(cell => cell.highlight)
         if (highlightCell) {
-            Renderer.rect(ctx, highlightCell.x * this.cellWidth, highlightCell.y * this.cellHeight, this.cellWidth - .15, this.cellHeight - .15, {
+            OffscreenRenderer.rect(highlightCell.x * this.cellWidth, highlightCell.y * this.cellHeight, this.cellWidth, this.cellHeight, {
                 globalAlpha: .25,
                 strokeStyle: color.highlightTransparent,
                 fillStyle: color.highlightTransparent,
@@ -268,12 +262,13 @@ export class Env {
         }
         const focusCell: Cell = this.grid.focusCell
         if (focusCell) {
-            Renderer.rect(ctx, focusCell.x * this.cellWidth, focusCell.y * this.cellWidth, this.cellWidth, this.cellWidth, {
+            OffscreenRenderer.rect(focusCell.x * this.cellWidth, focusCell.y * this.cellWidth, this.cellWidth, this.cellWidth, {
                 globalAlpha: 1,
                 strokeStyle: color.highlight,
                 fillStyle: 'transparent',
                 lineWidth: 2.5
             })
         }
+        OffscreenRenderer.endFrame()
     }
 }

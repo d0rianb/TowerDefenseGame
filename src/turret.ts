@@ -1,8 +1,8 @@
+import { OffscreenRenderer, Renderer, Point } from 'unrail-engine'
+
 import { Cell, CellType } from './grid'
-import { Point } from './path'
 import { Env } from './env'
 import { Enemy } from './enemy'
-import { Renderer } from './render'
 import { Interface } from './interface'
 
 import { TURRET_BASE_TEXTURE, TURRET_HEAD_TEXTURE } from './texture'
@@ -134,15 +134,15 @@ class Turret {
         }
     }
 
-    render(ctx: CanvasRenderingContext2D, preview: boolean = false): void {
+    render(preview: boolean = false): void {
         TURRET_HEAD_TEXTURE.rotation = this.dir + Math.PI / 2
         if (preview) {
-            Renderer.rectSprite(ctx, 20, 20, 80, 80, TURRET_BASE_TEXTURE)
-            Renderer.rectSprite(ctx, 20, 20, 80, 80, TURRET_HEAD_TEXTURE)
+            Renderer.rectSprite(20, 20, 80, 80, TURRET_BASE_TEXTURE)
+            Renderer.rectSprite(20, 20, 80, 80, TURRET_HEAD_TEXTURE)
         } else {
-            Renderer.rectSprite(ctx, this.origin.x, this.origin.y, this.env.cellWidth, this.env.cellWidth, TURRET_BASE_TEXTURE)
-            Renderer.rectSprite(ctx, this.origin.x, this.origin.y, this.env.cellWidth, this.env.cellWidth, TURRET_HEAD_TEXTURE)
-            Renderer.circle(ctx, this.pos.x, this.pos.y, this.radius, { lineWidth: 1, globalAlpha: .25, strokeStyle: 'white' })
+            OffscreenRenderer.rectSprite(this.origin.x, this.origin.y, this.env.cellWidth, this.env.cellWidth, TURRET_BASE_TEXTURE)
+            OffscreenRenderer.rectSprite(this.origin.x, this.origin.y, this.env.cellWidth, this.env.cellWidth, TURRET_HEAD_TEXTURE)
+            OffscreenRenderer.circle(this.pos.x, this.pos.y, this.radius, { lineWidth: 1, globalAlpha: .25, strokeStyle: 'white' })
         }
     }
 }
@@ -169,8 +169,8 @@ class Shot {
         this.pos.y += this.speed * Math.sin(this.dir)
     }
 
-    render(ctx: CanvasRenderingContext2D) {
-        Renderer.line(ctx, this.pos, new Point(this.pos.x + this.length * Math.cos(this.dir), this.pos.y + this.length * Math.sin(this.dir)), { lineWidth: 2.5, strokeStyle: 'rgb(230, 118, 14)' })
+    render() {
+        OffscreenRenderer.line(this.pos.x, this.pos.y, this.pos.x + this.length * Math.cos(this.dir), this.pos.y + this.length * Math.sin(this.dir), { lineWidth: 2.5, strokeStyle: 'rgb(230, 118, 14)' })
     }
 }
 
